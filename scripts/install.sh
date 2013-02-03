@@ -31,6 +31,18 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+function funct_add_cloud_archive {
+	apt-get update
+	apt-get upgrade -y
+	apt-get install ubuntu-cloud-keyring
+	echo "deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates/folsom main" > /etc/apt/source.d/folsom.list
+	apt-get update
+}
+
+##Add the Ubuntu Cloud Archive to the repository list.
+##This command will also update and upgrade the system.
+funct_add_cloud_archive
+
 ##Install NTP, set up the NTP server on your controller node so that it 
 ##receives data by modifying the ntp.conf file and restart the service.
 echo "Install NTP"
