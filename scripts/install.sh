@@ -3,12 +3,17 @@
 #http://docs.openstack.org/trunk/openstack-compute/install/apt/content/
 
 function func_install {
-	COMMAND_INSTALL="apt-get install -y $1"
+	COMMAND_INSTALL="apt-get install -y"
 	if [ "$1" -n ]
 	then
 		echo "No parameter for install function"
 		exit 1
 	else
+		for package in "$@"
+		do
+			args="$args $package"
+		done
+		COMMAND_INSTALL="$COMMAND_INSTALL $args"
 		echo "$COMMAND_INSTALL"
 		`$COMMAND_INSTALL`
 		if [ $? -eq 0 ]
@@ -20,6 +25,11 @@ function func_install {
 		fi
 	fi
 }
+
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
 
 ##Install NTP, set up the NTP server on your controller node so that it 
 ##receives data by modifying the ntp.conf file and restart the service.
@@ -35,3 +45,6 @@ service ntp restart
 func_install python-mysqldb mysql-server
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
 service mysql restart
+
+##Install RabbitMQ
+func_install rabbitmq-server
