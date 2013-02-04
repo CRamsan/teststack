@@ -132,8 +132,8 @@ function func_create_user {
 function func_create_role {
 	ADMINTOKEN=$1
 	KEYSTONEIP=$2
-	ROLEID=$3
-	ADMINROLEID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 role-create --name "$ROLENAME" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
+	ROLENAME=$3
+	ROLEID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 role-create --name "$ROLENAME" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
 	echo $ROLEID
 }
 
@@ -289,8 +289,6 @@ then
 	ADMINUSERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTID"  "$ADMINUSERNAME" "$ADMINUSERPASS")
 	func_set_value "ADMINUSERID" $ADMINUSERID
 fi
-
-exit
 
 ##Check for the existance of an admin role. IF it does not exist, create one.
 if [ ! -n "$ADMINROLENAME" ] || [ ! -n "$ADMINROLEID" ]
