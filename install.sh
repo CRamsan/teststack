@@ -98,16 +98,13 @@ function func_replace_param {
 	file=$1
 	parameter=$2
 	newvalue=$3
-
 	func_echo "In file $file - Parameter \"$parameter\" is been set to \"$newvalue\""
-
 	oldline=$(sed 's/ =//g' $file | grep "^$parameter=")
 	sed -i 's/ =/=/g' $file
 	newvaluefixed=$(echo $newvalue | sed -e 's/[]\/()$*.^|[]/\\&/g')
 	oldlinefixed=$(echo $oldline | sed -e 's/[]\/()$*.^|[]/\\&/g')
 	sed -i "s/$oldlinefixed/$parameter=$newvaluefixed/g" $file
 	newline=$(cat $file | grep "^$parameter=")
-
 	func_echo $oldline
 	func_echo "V-V-V-V-V-V-V-V"
 	func_echo $newline
@@ -262,9 +259,6 @@ func_replace_param "/etc/keystone/keystone.conf" "admin_token" "$ADMINTOKEN"
 ##Lastly, initialize the new keystone database.
 service keystone restart
 keystone-manage db_sync
-
-keystone --token "$ADMINTOKEN" --endpoint http://192.168.0.150:35357/v2.0 tenant-create --name demo --description "Default Tenant"
-exit
 
 ##Check for the existance of a default tenant's name and their ID.
 if [ ! -n "$DEFTENANTNAME" ] || [ ! -n "$DEFTENANTID"]
