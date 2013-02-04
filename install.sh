@@ -183,14 +183,14 @@ service ntp restart
 ##Use sed to edit /etc/mysql/my.cnf to change bind-address from localhost (127.0.0.1)
 ##to any (0.0.0.0) and restart the mysql service.
 func_echo "Install MySQL and related packages"
-#func_install python-mysqldb
+func_install python-mysqldb
 
 if [ ! -n "$MYSQLPASS" ]
 then
 	func_set_password "MYSQLPASS" "MySQL Root" 
 	MYSQLPASS=$(func_retrieve_value "MYSQLPASS")
 fi
-#func_install_my-sql $MYSQLPASS
+func_install_my-sql $MYSQLPASS
 
 func_echo "Update MySQL config"
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
@@ -267,7 +267,7 @@ then
         DEFTENANTNAME=$(func_ask_user)
         func_set_value "DEFTENANTNAME" $DEFTENANTNAME
 
-	func_echo func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTNAME"
+	#func_echo "func_create_tenant \"$ADMINTOKEN\" \"$KEYSTONEIP\" \"$DEFTENANTNAME\""
 
 	DEFTENANTID=$(func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTNAME" )
 	func_set_value "DEFTENANTID" $DEFTENANTID
@@ -284,7 +284,7 @@ then
         func_set_password "ADMINUSERPASS" "Admin user's password"
         ADMINUSERPASS=$(func_retrieve_value "ADMINUSERPASS")
 
-	func_echo func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTID"  "$ADMINUSERNAME" "$ADMINUSERPASS"
+	#func_echo "func_create_user \"$ADMINTOKEN\" \"$KEYSTONEIP\" \"$DEFTENANTID\"  \"$ADMINUSERNAME\" \"$ADMINUSERPASS\""
 
 	ADMINUSERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTID"  "$ADMINUSERNAME" "$ADMINUSERPASS")
 	func_set_value "ADMINUSERID" $ADMINUSERID
