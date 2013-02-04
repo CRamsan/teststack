@@ -99,6 +99,7 @@ function func_replace_param {
 	parameter=$2
 	newvalue=$3
 	func_echo "In file $file - Parameter \"$parameter\" is been set to \"$newvalue\""
+	echo sed 's/ =//g' $file | grep "^$parameter="
 	oldline=$(sed 's/ =//g' $file | grep "^$parameter=")
 	sed -i 's/ =/=/g' $file
 	newvaluefixed=$(echo $newvalue | sed -e 's/[]\/()$*.^|[]/\\&/g')
