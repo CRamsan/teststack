@@ -92,16 +92,13 @@ function func_replace_param {
 	file=$1
 	parameter=$2
 	newvalue=$3
-
 	func_echo "In file $file - Parameter \"$parameter\" is been set to \"$newvalue\""
-
-	oldline=$(sed 's/ //g' $file | grep "^$parameter=")
-	sed -i 's/ //g' $file
+	oldline=$(sed 's/ =/=/g' $file | grep "^$parameter=")
+	sed -i 's/ =/=/g' $file
 	newvaluefixed=$(echo $newvalue | sed -e 's/[]\/()$*.^|[]/\\&/g')
 	oldlinefixed=$(echo $oldline | sed -e 's/[]\/()$*.^|[]/\\&/g')
 	sed -i "s/$oldlinefixed/$parameter=$newvaluefixed/g" $file
 	newline=$(cat $file | grep "^$parameter=")
-
 	func_echo $oldline
 	func_echo "V-V-V-V-V-V-V-V"
 	func_echo $newline
@@ -112,7 +109,7 @@ function func_create_tenant {
 	KEYSTONEIP=$2
 	TENANTNAME=$3
 	DESCRIPTION="No description"
-       	TENANTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 tenant-create --name "$TENANTNAME" --description "$DESCRIPTION" | grep "id" | sed 's/ //g')
+       	TENANTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 tenant-create --name "$TENANTNAME" --description "$DESCRIPTION" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
 	echo $TENANTID
 }
 
@@ -122,15 +119,15 @@ function func_create_user {
 	TENANTID=$3
 	USERNAME=$4
 	PASSWORD=$5
-	ADMINUSERID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create --tenant-id "$TENANTID"  --name "$USERNAME" --pass "$PASSWORD" | grep "id" | sed 's/ //g' | cut -d'|' -f3)	
+	USERID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create --tenant_id "$TENANTID" --name "$USERNAME" --pass "$PASSWORD" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
 	echo $USERID
 }
 
 function func_create_role {
 	ADMINTOKEN=$1
 	KEYSTONEIP=$2
-	ROLEID=$3
-	ADMINROLEID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 role-create --name "$ROLENAME" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
+	ROLENAME=$3
+	ROLEID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 role-create --name "$ROLENAME" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
 	echo $ROLEID
 }
 
@@ -140,7 +137,7 @@ function func_user_role_add {
 	USERID=$3
 	TENANTID=$4
 	ROLEID=$5
-	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user "$USERID" --tenant_id "$TENANTID" --role "$ROLEID"
+	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user_id "$USERID" --tenant_id "$TENANTID" --role_id "$ROLEID"
 }
 
 function func_echo {

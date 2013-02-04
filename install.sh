@@ -14,6 +14,9 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+if [ 0 -eq 5 ]
+then
+
 ##Run all the prerequisites
 func_pre
 
@@ -72,6 +75,8 @@ func_install rabbitmq-server
 func_install keystone
 #Delete the keystone.db file created in the /var/lib/keystone directory.
 rm /var/lib/keystone/keystone.db
+
+fi
 
 ##Check if keystone password exists,
 ##if it does not, ask the user for one.
