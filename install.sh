@@ -213,6 +213,7 @@ fi
 fund_echo "Install RabbitMQ"
 func_install rabbitmq-server
 
+
 ###################################################################################
 
 ##Install the identity service, Keystone!
@@ -220,7 +221,6 @@ func_install rabbitmq-server
 func_install keystone
 #Delete the keystone.db file created in the /var/lib/keystone directory.
 rm /var/lib/keystone/keystone.db
-
 
 ##Check if keystone password exists,
 ##if it does not, ask the user for one.
@@ -262,6 +262,9 @@ func_replace_param "/etc/keystone/keystone.conf" "admin_token" "$ADMINTOKEN"
 ##Lastly, initialize the new keystone database.
 service keystone restart
 keystone-manage db_sync
+
+keystone --token "$ADMINTOKEN" --endpoint http://192.168.0.150:35357/v2.0 tenant-create --name demo --description "Default Tenant"
+exit
 
 ##Check for the existance of a default tenant's name and their ID.
 if [ ! -n "$DEFTENANTNAME" ] || [ ! -n "$DEFTENANTID"]
@@ -333,4 +336,3 @@ then
 fi
 
 func_replace_param "/etc/keystone/keystone.conf" "driver" "keystone.catalog.backends.sql.Catalog"
-
