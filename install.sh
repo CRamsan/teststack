@@ -115,7 +115,7 @@ function func_create_tenant {
 	KEYSTONEIP=$2
 	TENANTNAME=$3
 	DESCRIPTION="No description"
-       	TENANTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 tenant-create --name "$TENANTNAME" --description "$DESCRIPTION" | grep "id" | sed 's/ //g')
+       	TENANTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 tenant-create --name "$TENANTNAME" --description "$DESCRIPTION" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
 	echo $TENANTID
 }
 
@@ -125,7 +125,7 @@ function func_create_user {
 	TENANTID=$3
 	USERNAME=$4
 	PASSWORD=$5
-	ADMINUSERID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create --tenant-id "$TENANTID"  --name "$USERNAME" --pass "$PASSWORD" | grep "id" | sed 's/ //g' | cut -d'|' -f3)	
+	ADMINUSERID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create --tenant_id "$TENANTID" --name "$USERNAME" --pass "$PASSWORD" | grep "id" | sed 's/ //g' | cut -d'|' -f3)	
 	echo $USERID
 }
 
@@ -143,7 +143,7 @@ function func_user_role_add {
 	USERID=$3
 	TENANTID=$4
 	ROLEID=$5
-	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user-id "$USERID" --tenant-id "$TENANTID" --role-id "$ROLEID"
+	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user_id "$USERID" --tenant_id "$TENANTID" --role_id "$ROLEID"
 }
 
 function func_echo {
@@ -261,11 +261,14 @@ service keystone restart
 keystone-manage db_sync
 
 ##Check for the existance of a default tenant's name and their ID.
-if [ ! -n "$DEFTENANTNAME" ] || [ ! -n "$DEFTENANTID"]
+if [ ! -n "$DEFTENANTNAME" ] || [ ! -n "$DEFTENANTID" ]
 then
         echo "What is going to be the name for the default tenant?:"
         DEFTENANTNAME=$(func_ask_user)
         func_set_value "DEFTENANTNAME" $DEFTENANTNAME
+
+	echo func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTNAME"
+
 	DEFTENANTID=$(func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTNAME" )
 	func_set_value "DEFTENANTID" $DEFTENANTID
 fi
@@ -280,6 +283,8 @@ then
 
         func_set_password "ADMINUSERPASS" "Admin user's password"
         ADMINUSERPASS=$(func_retrieve_value "ADMINUSERPASS")
+
+	echo func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTID"  "$ADMINUSERNAME" "$ADMINUSERPASS"
 
 	ADMINUSERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTID"  "$ADMINUSERNAME" "$ADMINUSERPASS")
 	func_set_value "ADMINUSERID" $ADMINUSERID
