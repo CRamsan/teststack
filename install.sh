@@ -161,11 +161,11 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 ##Run all the prerequisites
-#func_pre
+func_pre
 
 ##Add the Ubuntu Cloud Archive to the repository list.
 ##This command will also update and upgrade the system.
-#funct_add_cloud_archive
+funct_add_cloud_archive
 
 ##Install NTP, set up the NTP server on your controller node so that it 
 ##receives data by modifying the ntp.conf file and restart the service.
@@ -208,7 +208,7 @@ fi
 
 ##Install RabbitMQ
 func_echo "Install RabbitMQ"
-#func_install rabbitmq-server
+func_install rabbitmq-server
 
 
 ###################################################################################
@@ -289,6 +289,8 @@ then
 	ADMINUSERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTID"  "$ADMINUSERNAME" "$ADMINUSERPASS")
 	func_set_value "ADMINUSERID" $ADMINUSERID
 fi
+
+exit
 
 ##Check for the existance of an admin role. IF it does not exist, create one.
 if [ ! -n "$ADMINROLENAME" ] || [ ! -n "$ADMINROLEID" ]
