@@ -29,6 +29,11 @@ function func_install {
 }
 
 function func_pre {
+
+	func_replace_param "/etc/keystone/keystone.conf" "connection" "mysql://keystone:$KEYSTONEPASS@$KEYSTONEIP/keystone"
+
+	exit
+
 	func_install debconf 
 	func_clear_values
 }
@@ -55,12 +60,7 @@ function funct_add_cloud_archive {
 }
 
 function func_ask_user {
-	if [ -n "$1" ]
-	then
-		msg=$1
-		echo $msg
-	fi
-	read -e $val
+	read -e val
 	echo $val
 }
 
@@ -85,13 +85,14 @@ function func_set_password {
 	done
 	if [ ! $pw ]; then
 		pw=`openssl rand -hex 10`
+		echo "Password: $pw"
 	fi
 	func_set_value "$var" "$pw"
 }
 
 function func_retrieve_value {
 	key=$1
-	grep "$key" "$localrc"
+	grep "$key" "$localrc" | cut -d'=' -f2
 }
 
 function func_clear_values {
@@ -103,8 +104,15 @@ function func_replace_param {
 	parameter=$2
 	newvalue=$3
 
-	oldline=$(sed -i 's/ //g' $file | grep '^$parameter=')
-	newline=$(sed -i 's/$oldline/$parameter=$newvalue/g')
+	echo "In file $file - Parameter \"$parameter\" is been set to \"$newvalue\""
+
+	oldline=$(sed 's/ //g' $file | grep "^$parameter=")
+	sed -i 's/ //g' $file
+	newvaluefixed=$(echo $newvalue | sed -e 's/[]\/()$*.^|[]/\\&/g')
+	oldlinefixed=$(echo $oldline | sed -e 's/[]\/()$*.^|[]/\\&/g')
+	sed -i "s/$oldlinefixed/$parameter=$newvaluefixed/g" $file
+	newline=$(cat $file | grep "^$parameter=")
+
 	echo $oldline
 	echo "V-V-V-V-V-V-V-V"
 	echo $newline
@@ -137,9 +145,9 @@ service ntp restart
 ##Use sed to edit /etc/mysql/my.cnf to change bind-address from localhost (127.0.0.1)
 ##to any (0.0.0.0) and restart the mysql service.
 echo "Install MySQL and related packages"
-connection = mysql://keystone:[YOUR_KEYSTONEDB_PASSWORD]@192.168.206.130/keystonefunc_install python-mysqldb
+func_install python-mysqldb
 
-func_get_password "ROOTPASS" "MySQL Root" 
+func_set_password "ROOTPASS" "MySQL Root" 
 MYSQLPASS=$(func_retrieve_value "ROOTPASS")
 func_install_my-sql $MYSQLPASS
 
@@ -169,4 +177,7 @@ GRANT ALL ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '$KEYSTONEPASS';
 GRANT ALL ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY '$KEYSTONEPASS';
 EOF
 
-func_replace_param "/etc/keystone/keystone.conf" "connection" "mysql://keystone:$KEYSTONEPASS@192.168.206.130/keystone"
+echo "On which host has Keystone been installed? Please use the IP and not the hostname"
+KEYSTONEIP=$(func_ask_user)
+
+func_replace_param "/etc/keystone/keystone.conf" "connection" "mysql://keystone:$KEYSTONEPASS@$KEYSTONEIP/keystone"
