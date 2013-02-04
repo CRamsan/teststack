@@ -146,8 +146,6 @@ then
 	func_set_value "ADMINUSERID" $ADMINUSERID
 fi
 
-fi
-
 ##Check for the existance of an admin role. IF it does not exist, create one.
 if [ ! -n "$ADMINROLENAME" ] || [ ! -n "$ADMINROLEID" ]
 then
@@ -160,6 +158,8 @@ fi
 
 ##Add the admin user to the admin role. This command produces no output.
 func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$ADMINUSERID" "$DEFTENANTID" "$ADMINROLEID"
+
+fi
 
 ##Create another tenant. This tenant will hold all the OpenStack services.
 if [ ! -n "$SERVTENANTID" ]
