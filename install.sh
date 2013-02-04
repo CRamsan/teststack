@@ -4,7 +4,7 @@
 
 localrc="localrc"
 
-source fucntions.sh
+source functions.sh
 
 ###################################################################################
 
@@ -14,6 +14,8 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+if [ 0 -eq 2 ]
+then
 ##Run all the prerequisites
 func_pre
 
@@ -142,6 +144,8 @@ then
 
 	ADMINUSERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTID"  "$ADMINUSERNAME" "$ADMINUSERPASS")
 	func_set_value "ADMINUSERID" $ADMINUSERID
+fi
+
 fi
 
 ##Check for the existance of an admin role. IF it does not exist, create one.
