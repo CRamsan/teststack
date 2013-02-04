@@ -46,11 +46,6 @@ function func_install_my-sql {
 	func_install mysql-server
 }
 
-if [[ $EUID -ne 0 ]]; then
-   echo "This script must be run as root" 1>&2
-   exit 1
-fi
-
 function funct_add_cloud_archive {
 	apt-get update
 	apt-get upgrade -y
@@ -59,7 +54,24 @@ function funct_add_cloud_archive {
 	apt-get update
 }
 
-function func_get_password {
+function func_ask_user {
+	if [ -n "$1" ]
+	then
+		msg=$1
+		echo $msg
+	fi
+	read -e $val
+	echo $val
+}
+
+function func_set_value {
+	key=$1
+	val=$2
+	eval "$key=$val"
+        echo "$key=$val" >> $localrc
+}
+
+function func_set_password {
 	var=$1
 	mesg=$2
 	pw=" "
@@ -74,8 +86,7 @@ function func_get_password {
 	if [ ! $pw ]; then
 		pw=`openssl rand -hex 10`
 	fi
-	eval "$var=$pw"
-        echo "$var=$pw" >> $localrc
+	func_set_value "$var" "$pw"
 }
 
 function func_retrieve_value {
@@ -83,9 +94,26 @@ function func_retrieve_value {
 	grep "$key" "$localrc"
 }
 
-function func_clear_values{
+function func_clear_values {
 	rm "$localrc"
 }
+
+function func_replace_param {
+	file=$1
+	parameter=$2
+	newvalue=$3
+
+	oldline=$(sed -i 's/ //g' $file | grep '^$parameter=')
+	newline=$(sed -i 's/$oldline/$parameter=$newvalue/g')
+	echo $oldline
+	echo "V-V-V-V-V-V-V-V"
+	echo $newline
+}
+
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
 
 func_pre
 
@@ -109,10 +137,12 @@ service ntp restart
 ##Use sed to edit /etc/mysql/my.cnf to change bind-address from localhost (127.0.0.1)
 ##to any (0.0.0.0) and restart the mysql service.
 echo "Install MySQL and related packages"
-func_install python-mysqldb
+connection = mysql://keystone:[YOUR_KEYSTONEDB_PASSWORD]@192.168.206.130/keystonefunc_install python-mysqldb
+
 func_get_password "ROOTPASS" "MySQL Root" 
 MYSQLPASS=$(func_retrieve_value "ROOTPASS")
 func_install_my-sql $MYSQLPASS
+
 echo "Update MySQL config"
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
 echo "Restart MySQL service"
@@ -130,4 +160,13 @@ func_install keystone
 rm /var/lib/keystone/keystone.db
 
 
-#mysql -u root -p -e 
+func_set_password "KEYSTONEPASS" "Keystone user"
+KEYSTONEPASS=$(func_retrieve_value "KEYSTONEPASS")
+
+mysql -u root -p"$MYSQLPASS" <<EOF
+CREATE DATABASE keystone;
+GRANT ALL ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '$KEYSTONEPASS';
+GRANT ALL ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY '$KEYSTONEPASS';
+EOF
+
+func_replace_param "/etc/keystone/keystone.conf" "connection" "mysql://keystone:$KEYSTONEPASS@192.168.206.130/keystone"
