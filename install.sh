@@ -14,8 +14,6 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [ 0 -eq 2 ]
-then
 ##Run all the prerequisites
 func_pre
 
@@ -159,7 +157,7 @@ fi
 ##Add the admin user to the admin role. This command produces no output.
 func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$ADMINUSERID" "$DEFTENANTID" "$ADMINROLEID"
 
-fi
+exit
 
 ##Create another tenant. This tenant will hold all the OpenStack services.
 if [ ! -n "$SERVTENANTID" ]
