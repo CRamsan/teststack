@@ -29,13 +29,7 @@ function func_install {
 }
 
 function func_pre {
-
-	func_replace_param "/etc/keystone/keystone.conf" "connection" "mysql://keystone:$KEYSTONEPASS@$KEYSTONEIP/keystone"
-
-	exit
-
-	func_install debconf 
-	func_clear_values
+	func_install debconf
 }
 
 function func_install_my-sql {
@@ -45,8 +39,9 @@ function func_install_my-sql {
 		echo "Exiting now"
            	exit 1
        	else
-		echo mysql-server mysql-server/root_password select PASSWORD | debconf-set-selections
-		echo mysql-server mysql-server/root_password_again select PASSWORD | debconf-set-selections
+		PASSWORD=$1
+		echo mysql-server mysql-server/root_password select $PASSWORD | debconf-set-selections
+		echo mysql-server mysql-server/root_password_again select $PASSWORD | debconf-set-selections
 	fi
 	func_install mysql-server
 }
@@ -68,7 +63,7 @@ function func_set_value {
 	key=$1
 	val=$2
 	eval "$key=$val"
-        echo "$key=$val" >> $localrc
+        echo "export $key=$val" >> $localrc
 }
 
 function func_set_password {
@@ -92,7 +87,7 @@ function func_set_password {
 
 function func_retrieve_value {
 	key=$1
-	grep "$key" "$localrc" | cut -d'=' -f2
+	grep "$key" "$localrc" | cut -d'=' -f2 | sed 's/export //g'
 }
 
 function func_clear_values {
@@ -127,7 +122,7 @@ func_pre
 
 ##Add the Ubuntu Cloud Archive to the repository list.
 ##This command will also update and upgrade the system.
-#funct_add_cloud_archive
+funct_add_cloud_archive
 
 ##Install NTP, set up the NTP server on your controller node so that it 
 ##receives data by modifying the ntp.conf file and restart the service.
@@ -147,8 +142,11 @@ service ntp restart
 echo "Install MySQL and related packages"
 func_install python-mysqldb
 
-func_set_password "ROOTPASS" "MySQL Root" 
-MYSQLPASS=$(func_retrieve_value "ROOTPASS")
+if [ ! -n "$MYSQLPASS" ]
+then
+	func_set_password "MYSQLPASS" "MySQL Root" 
+	MYSQLPASS=$(func_retrieve_value "MYSQLPASS")
+fi
 func_install_my-sql $MYSQLPASS
 
 echo "Update MySQL config"
@@ -167,9 +165,11 @@ func_install keystone
 #Delete the keystone.db file created in the /var/lib/keystone directory.
 rm /var/lib/keystone/keystone.db
 
-
-func_set_password "KEYSTONEPASS" "Keystone user"
-KEYSTONEPASS=$(func_retrieve_value "KEYSTONEPASS")
+if [ ! -n "$KEYSTONEPASS" ]
+then
+	func_set_password "KEYSTONEPASS" "Keystone user"
+	KEYSTONEPASS=$(func_retrieve_value "KEYSTONEPASS")
+fi
 
 mysql -u root -p"$MYSQLPASS" <<EOF
 CREATE DATABASE keystone;
@@ -177,7 +177,11 @@ GRANT ALL ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '$KEYSTONEPASS';
 GRANT ALL ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY '$KEYSTONEPASS';
 EOF
 
-echo "On which host has Keystone been installed? Please use the IP and not the hostname"
-KEYSTONEIP=$(func_ask_user)
+if [ ! -n "$KEYSTONEIP" ]
+then
+	echo "On which host has Keystone been installed? Please use the IP and not the hostname"
+	KEYSTONEIP=$(func_ask_user)
+	func_set_value "KEYSTONEIP" $KEYSTONEIP
+fi
 
 func_replace_param "/etc/keystone/keystone.conf" "connection" "mysql://keystone:$KEYSTONEPASS@$KEYSTONEIP/keystone"
