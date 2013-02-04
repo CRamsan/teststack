@@ -207,7 +207,7 @@ else
 fi
 
 ##Install RabbitMQ
-fund_echo "Install RabbitMQ"
+func_echo "Install RabbitMQ"
 func_install rabbitmq-server
 
 
