@@ -215,7 +215,7 @@ func_install rabbitmq-server
 
 ##Install the identity service, Keystone!
 ##Install the package
-#func_install keystone
+func_install keystone
 #Delete the keystone.db file created in the /var/lib/keystone directory.
 rm /var/lib/keystone/keystone.db
 
