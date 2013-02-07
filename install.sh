@@ -270,3 +270,5 @@ then
 	SERVSWIFTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create --tenant-id "$SERVTENANTID" --name swift --pass swiftpass | grep "id" | sed 's/ //g')
 	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user-id "$SERVSWIFTID" --tenant-id "$SERVTENANTID" --role-id "$ADMINROLEID"
 fi
+
+func_replace_param "/etc/keystone/keystone.conf" "driver" "keystone.catalog.backends.sql.Catalog"
