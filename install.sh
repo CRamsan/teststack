@@ -113,6 +113,8 @@ function func_replace_param {
 	echo $newline
 }
 
+###################################################################################
+
 if [[ $EUID -ne 0 ]]; then
    echo "This script must be run as root" 1>&2
    exit 1
@@ -158,6 +160,7 @@ service mysql restart
 echo "Install RabbitMQ"
 func_install rabbitmq-server
 
+###################################################################################
 
 ##Install the identity service, Keystone!
 ##Install the package
@@ -185,3 +188,44 @@ then
 fi
 
 func_replace_param "/etc/keystone/keystone.conf" "connection" "mysql://keystone:$KEYSTONEPASS@$KEYSTONEIP/keystone"
+
+if [ ! -n "$ADMINTOKEN" ]
+then
+	func_set_password "ADMINTOKEN" "Admin token"
+	ADMINTOKEN=$(func_retrieve_value "ADMINTOKEN")
+fi
+
+if [ ! -n "$DEFTENANTNAME" ] | [ ! -n "$DEFTENANTID"]
+then
+        echo "What is going to be the name for the default tenant?:"
+        DEFTENANTNAME=$(func_ask_user)
+        func_set_value "DEFTENANTNAME" $DEFTENANTNAME
+	DEFTENANTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 tenant-create --name "$DEFTENANTNAME" --description "Default Tenant" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
+	func_set_value "DEFTENANTID" $DEFTENANTID
+fi
+
+if [ ! -n "$ADMINUSERNAME" ] | [ ! -n "$ADMINUSERPASS"]
+then
+        echo "What is going to be the name for the admin user?:"
+        ADMINUSERNAME=$(func_ask_user)
+        func_set_value "ADMINUSERNAME" $ADMINUSERNAME
+
+        func_set_password "ADMINUSERPASS" "Admin user's password"
+        ADMINUSERPASS=$(func_retrieve_value "ADMINUSERPASS")
+
+	ADMINUSERID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create --tenant-id "$DEFTENANTID"  --name "$ADMINUSERNAME" --pass "$ADMINUSERPASS" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
+fi
+
+
+
+
+if [ ! -n "$ADMINROLENAME" ]
+then
+        echo "What is going to be the name for the admin role?:"
+        ADMINROLENAME=$(func_ask_user)
+        func_set_value "ADMINROLENAME" $ADMINROLENAME
+	ADMINROLEID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 role-create --name "$ADMINROLENAME" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
+fi
+
+keystone --token "$ADMINTOKEN" --endpoint http://"KEYSTONEIP":35357/v2.0 user-role-add --user-id "$ADMINUSERID" --tenant-id "$DEFTENANTID" --role-id "$ADMINROLEID"
+
