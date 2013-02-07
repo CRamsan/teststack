@@ -229,3 +229,16 @@ fi
 
 keystone --token "$ADMINTOKEN" --endpoint http://"KEYSTONEIP":35357/v2.0 user-role-add --user-id "$ADMINUSERID" --tenant-id "$DEFTENANTID" --role-id "$ADMINROLEID"
 
+keystone --token "$ADMINTOKEN" --endpoint http://192.168.206.130:35357/v2.0 tenant-create 	--name service --description "Service Tenant"
+
+keystone --token "$ADMINTOKEN"--endpoint http://192.168.206.130:35357/v2.0 user-create 	--tenant-id eb7e0c10a99446cfa14c244374549e9d 	--name glance --pass glance
+keystone --token "$ADMINTOKEN"--endpoint http://192.168.206.130:35357/v2.0 user-role-add 	--user-id 46b2667a7807483d983e0b4037a1623b 	--tenant-id eb7e0c10a99446cfa14c244374549e9d --role-id e3d9d157cc95410ea45d23bbbc2e5c10
+
+keystone --token "$ADMINTOKEN"--endpoint http://192.168.206.130:35357/v2.0 user-create 	--tenant-id eb7e0c10a99446cfa14c244374549e9d 	--name nova --pass nova
+keystone --token "$ADMINTOKEN"--endpoint http://192.168.206.130:35357/v2.0 user-role-add 	--user-id 54b3776a8707834d983e0b4037b1345c 	--tenant-id eb7e0c10a99446cfa14c244374549e9d --role-id e3d9d157cc95410ea45d23bbbc2e5c10
+
+keystone --token "$ADMINTOKEN" --endpoint http://192.168.206.130:35357/v2.0 user-create 	--tenant-id eb7e0c10a99446cfa14c244374549e9d 	--name ec2 --pass ec2
+keystone --token "$ADMINTOKEN" --endpoint http://192.168.206.130:35357/v2.0 user-role-add 	--user-id 32e7668b8707834d983e0b4037b1345c --tenant-id eb7e0c10a99446cfa14c244374549e9d --role-id e3d9d157cc95410ea45d23bbbc2e5c10
+
+keystone --token "$ADMINTOKEN" --endpoint http://192.168.206.130:35357/v2.0 user-create 	--tenant-id eb7e0c10a99446cfa14c244374549e9d 	--name swift --pass swiftpass
+keystone --token "$ADMINTOKEN" --endpoint http://192.168.206.130:35357/v2.0 user-role-add 	--user-id 4346677b8909823e389f0b4037b1246e 	--tenant-id eb7e0c10a99446cfa14c244374549e9d --role-id e3d9d157cc95410ea45d23bbbc2e5c10
