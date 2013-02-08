@@ -212,7 +212,7 @@ then
 	func_set_password "KEYSTONEPASS" "Keystone user"
 	KEYSTONEPASS=$(func_retrieve_value "KEYSTONEPASS")
 fi
-func_user_role_add
+
 ##Give Keystone access to the database.
 mysql -u root -p"$MYSQLPASS" <<EOF
 CREATE DATABASE keystone;
