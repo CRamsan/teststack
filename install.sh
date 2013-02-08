@@ -14,6 +14,9 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+if [ 2 -eq 4]
+then
+
 ##Run all the prerequisites
 func_pre
 
@@ -157,37 +160,48 @@ fi
 ##Add the admin user to the admin role. This command produces no output.
 func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$ADMINUSERID" "$DEFTENANTID" "$ADMINROLEID"
 
-exit
+fi
 
 ##Create another tenant. This tenant will hold all the OpenStack services.
 if [ ! -n "$SERVTENANTID" ]
 then
-	SERVTENATID=$(func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "service")
+	func_echo "Creating service user"
+	SERVTENANTID=$(func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "service")
 	func_set_value "SERVTENANTID" $SERVTENANTID
 fi
 
 if [ ! -n "$SERVGLANCEID" ]
 then
+	func_echo "Creating user Glance"
 	SERVGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "glance" "glance")
+	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVGALNCEID" "$SERVTENANTID" "$ADMINROLEID"
 fi
 
 if [ ! -n "$SERVNOVAID" ]
 then
+	func_echo "Creating user Nova"
 	SERVNOVAID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "nova" "nova")
+	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVNOVAID" "$SERVTENANTID" "$ADMINROLEID"
 fi
 
 if [ ! -n "$SERVEC2ID" ]
 then
+	func_echo "Creating user EC2"
 	SERVEC2ID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTEANTID" "ec2" "ec2")
+	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVEC2ID" "$SERVTENANTID" "$ADMINROLEID"
 fi
 
 if [ ! -n "$SERVSWIFTID" ]
 then
+	func_echo "Creating user Swift"
 	SERVSWIFTID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "swift" "swiftpass")
+	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVSWIFTID" "$SERVTENANTID" "$ADMINROLEID"
 fi
+
+exit
 
 func_replace_param "/etc/keystone/keystone.conf" "driver" "keystone.catalog.backends.sql.Catalog"
