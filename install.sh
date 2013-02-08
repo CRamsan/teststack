@@ -248,17 +248,20 @@ fi
 ##Configure Keystone to use mysql.
 func_replace_param "/etc/keystone/keystone.conf" "connection" "mysql://keystone:$KEYSTONEPASS@$KEYSTONEIP/keystone"
 
-##Next, restart the keystone service so that it picks up the new database configuration.
-##Lastly, initialize the new keystone database.
-service keystone restart
-keystone-manage db_sync
-
 ##Check for the existance of an AdminToken.
 if [ ! -n "$ADMINTOKEN" ]
 then
 	func_set_password "ADMINTOKEN" "Admin token"
 	ADMINTOKEN=$(func_retrieve_value "ADMINTOKEN")
 fi
+
+##And set the admin-token
+func_replace_param "/etc/keystone/keystone.conf" "admin_token" "$ADMINTOKEN"
+
+##Next, restart the keystone service so that it picks up the new database configuration.
+##Lastly, initialize the new keystone database.
+service keystone restart
+keystone-manage db_sync
 
 ##Check for the existance of a default tenant's name and their ID.
 if [ ! -n "$DEFTENANTNAME" ] || [ ! -n "$DEFTENANTID"]
