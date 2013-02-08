@@ -15,6 +15,8 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [ 2 -eq 4]
+=======
+if [ 1 -eq 6 ]
 then
 
 ##Run all the prerequisites
@@ -163,13 +165,18 @@ func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$ADMINUSERID" "$DEFTENANTID" "$A
 fi
 
 ##Create another tenant. This tenant will hold all the OpenStack services.
+func_echo "Creating tenant for OpenStack services"
 if [ ! -n "$SERVTENANTID" ]
 then
+<<<<<<< HEAD
 	func_echo "Creating service user"
+=======
+>>>>>>> b661be4592736bd73ca8e51f646a0c317c3581e7
 	SERVTENANTID=$(func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "service")
 	func_set_value "SERVTENANTID" $SERVTENANTID
 fi
 
+func_echo "Creaing user for Glance"
 if [ ! -n "$SERVGLANCEID" ]
 then
 	func_echo "Creating user Glance"
@@ -178,6 +185,7 @@ then
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVGALNCEID" "$SERVTENANTID" "$ADMINROLEID"
 fi
 
+func_echo "Creaing user for Nova"
 if [ ! -n "$SERVNOVAID" ]
 then
 	func_echo "Creating user Nova"
@@ -186,6 +194,7 @@ then
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVNOVAID" "$SERVTENANTID" "$ADMINROLEID"
 fi
 
+func_echo "Creaing user for EC2"
 if [ ! -n "$SERVEC2ID" ]
 then
 	func_echo "Creating user EC2"
@@ -194,6 +203,7 @@ then
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVEC2ID" "$SERVTENANTID" "$ADMINROLEID"
 fi
 
+func_echo "Creaing user for Swift"
 if [ ! -n "$SERVSWIFTID" ]
 then
 	func_echo "Creating user Swift"
