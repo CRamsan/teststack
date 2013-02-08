@@ -178,6 +178,7 @@ then
 	SERVGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "glance" "glance")
 	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVGALNCEID" "$SERVTENANTID" "$ADMINROLEID"
+	func_set_value "SERVGLANCEID" $SERVGLANCEID
 fi
 
 func_echo "Creaing user for Nova"
@@ -187,6 +188,7 @@ then
 	SERVNOVAID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "nova" "nova")
 	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVNOVAID" "$SERVTENANTID" "$ADMINROLEID"
+	func_set_value "SERVNOVAID" $SERVNOVAID
 fi
 
 func_echo "Creaing user for EC2"
@@ -196,6 +198,7 @@ then
 	SERVEC2ID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTEANTID" "ec2" "ec2")
 	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVEC2ID" "$SERVTENANTID" "$ADMINROLEID"
+	func_set_value "SERVEC2ID" $SERVEC2ID
 fi
 
 func_echo "Creaing user for Swift"
@@ -205,6 +208,7 @@ then
 	SERVSWIFTID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "swift" "swiftpass")
 	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVSWIFTID" "$SERVTENANTID" "$ADMINROLEID"
+	func_set_value "SERVSWIFTID" $SERVSWIFTID
 fi
 
 exit
