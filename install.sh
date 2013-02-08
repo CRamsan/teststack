@@ -192,7 +192,7 @@ fi
 if [ ! -n "$SERVEC2ID" ]
 then
 	func_echo "Creating user EC2"
-	SERVEC2ID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTEANTID" "ec2" "ec2")
+	SERVEC2ID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "ec2" "ec2")
 	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVEC2ID" "$SERVTENANTID" "$ADMINROLEID"
 	func_set_value "SERVEC2ID" $SERVEC2ID
