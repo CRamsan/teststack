@@ -137,7 +137,7 @@ function func_user_role_add {
 	USERID=$3
 	TENANTID=$4
 	ROLEID=$5
-	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user_id "$USERID" --tenant_id "$TENANTID" --role_id "$ROLEID"
+	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user "$USERID" --tenant_id "$TENANTID" --role "$ROLEID"
 }
 
 function func_echo {
