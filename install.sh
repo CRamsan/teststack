@@ -171,17 +171,15 @@ then
 	func_set_value "SERVTENANTID" $SERVTENANTID
 fi
 
-func_echo "Creaing user for Glance"
 if [ ! -n "$SERVGLANCEID" ]
 then
 	func_echo "Creating user Glance"
 	SERVGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "glance" "glance")
 	func_echo "Adding user to service tenant"
-	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVGALNCEID" "$SERVTENANTID" "$ADMINROLEID"
+	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVGLANCEID" "$SERVTENANTID" "$ADMINROLEID"
 	func_set_value "SERVGLANCEID" $SERVGLANCEID
 fi
 
-func_echo "Creaing user for Nova"
 if [ ! -n "$SERVNOVAID" ]
 then
 	func_echo "Creating user Nova"
@@ -191,7 +189,6 @@ then
 	func_set_value "SERVNOVAID" $SERVNOVAID
 fi
 
-func_echo "Creaing user for EC2"
 if [ ! -n "$SERVEC2ID" ]
 then
 	func_echo "Creating user EC2"
@@ -201,7 +198,6 @@ then
 	func_set_value "SERVEC2ID" $SERVEC2ID
 fi
 
-func_echo "Creaing user for Swift"
 if [ ! -n "$SERVSWIFTID" ]
 then
 	func_echo "Creating user Swift"
