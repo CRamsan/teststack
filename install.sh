@@ -168,10 +168,7 @@ fi
 func_echo "Creating tenant for OpenStack services"
 if [ ! -n "$SERVTENANTID" ]
 then
-<<<<<<< HEAD
 	func_echo "Creating service user"
-=======
->>>>>>> b661be4592736bd73ca8e51f646a0c317c3581e7
 	SERVTENANTID=$(func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "service")
 	func_set_value "SERVTENANTID" $SERVTENANTID
 fi
