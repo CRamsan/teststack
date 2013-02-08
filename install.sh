@@ -14,8 +14,6 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [ 2 -eq 4]
-=======
 if [ 1 -eq 6 ]
 then
 
