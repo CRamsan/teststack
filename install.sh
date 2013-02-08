@@ -233,8 +233,8 @@ fi
 ##Give Keystone access to the database.
 mysql -u root -p"$MYSQLPASS" <<EOF
 CREATE DATABASE keystone;
-GRANT ALL ON keystone.* TO 'keystone'@'%' IDENTIFIED BY '$KEYSTONEPASS';
-GRANT ALL ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY '$KEYSTONEPASS';
+GRANT ALL ON keystone.* TO 'keystone'@'%' IDENTIFIED BY "$KEYSTONEPASS";
+GRANT ALL ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY "$KEYSTONEPASS";
 EOF
 
 ##Check the ip of the keystone service.
