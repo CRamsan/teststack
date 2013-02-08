@@ -113,6 +113,42 @@ function func_replace_param {
 	echo $newline
 }
 
+function func_create_tenant {
+	ADMINTOKEN=$1
+	KEYSTONEIP=$2
+	TENANTNAME=$3
+	DESCRIPTION="No description"
+       	TENANTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 tenant-create --name "$TENANTNAME" --description "$DESCRIPTION" | grep "id" | sed 's/ //g')
+	echo $TENANTID
+}
+
+function func_create_user {
+	ADMINTOKEN=$1
+	KEYSTONEIP=$2
+	TENANTID=$3
+	USERNAME=$4
+	PASSWORD=$5
+	ADMINUSERID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create --tenant-id "$TENANTID"  --name "$USERNAME" --pass "$PASSWORD" | grep "id" | sed 's/ //g' | cut -d'|' -f3)	
+	echo $USERID
+}
+
+function func_create_role {
+	ADMINTOKEN=$1
+	KEYSTONEIP=$2
+	ROLEID=$3
+	ADMINROLEID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 role-create --name "$ROLENAME" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
+	echo $ROLEID
+}
+
+function func_user_role_add {
+	ADMINTOKEN=$1
+	KEYSTONEIP=$2
+	USERID=$3
+	TENANTID=$4
+	ROLEID=$5
+	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user-id "$USERID" --tenant-id "$TENANTID" --role-id "$ROLEID"
+}
+
 ###################################################################################
 
 if [[ $EUID -ne 0 ]]; then
@@ -153,7 +189,7 @@ func_install_my-sql $MYSQLPASS
 
 echo "Update MySQL config"
 sed -i 's/127.0.0.1/0.0.0.0/g' /etc/mysql/my.cnf
-echo "Restart MySQL service"
+echo "Restart MySQL service" func_create_user
 service mysql restart
 
 ##Install RabbitMQ
@@ -176,7 +212,7 @@ then
 	func_set_password "KEYSTONEPASS" "Keystone user"
 	KEYSTONEPASS=$(func_retrieve_value "KEYSTONEPASS")
 fi
-
+func_user_role_add
 ##Give Keystone access to the database.
 mysql -u root -p"$MYSQLPASS" <<EOF
 CREATE DATABASE keystone;
@@ -208,7 +244,7 @@ then
         echo "What is going to be the name for the default tenant?:"
         DEFTENANTNAME=$(func_ask_user)
         func_set_value "DEFTENANTNAME" $DEFTENANTNAME
-	DEFTENANTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 tenant-create --name "$DEFTENANTNAME" --description "Default Tenant" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
+	DEFTENANTID=$(func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTNAME" )
 	func_set_value "DEFTENANTID" $DEFTENANTID
 fi
 
@@ -223,7 +259,7 @@ then
         func_set_password "ADMINUSERPASS" "Admin user's password"
         ADMINUSERPASS=$(func_retrieve_value "ADMINUSERPASS")
 
-	ADMINUSERID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create --tenant-id "$DEFTENANTID"  --name "$ADMINUSERNAME" --pass "$ADMINUSERPASS" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
+	ADMINUSERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTID"  "$ADMINUSERNAME" "$ADMINUSERPASS")
 	func_set_value "ADMINUSERID" $ADMINUSERID
 fi
 
@@ -233,42 +269,43 @@ then
         echo "What is going to be the name for the admin role?:"
         ADMINROLENAME=$(func_ask_user)
         func_set_value "ADMINROLENAME" $ADMINROLENAME
-	ADMINROLEID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 role-create --name "$ADMINROLENAME" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
+	ADMINROLEID=$(func_create_role "$ADMINTOKEN" "$KEYSTONEIP" "$ADMINROLENAME")
 	func_set_value "ADMINROLEID" $ADMINROLEID
 fi
 
 ##Add the admin user to the admin role. This command produces no output.
-keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user-id "$ADMINUSERID" --tenant-id "$DEFTENANTID" --role-id "$ADMINROLEID"
+func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$ADMINUSERID" "$DEFTENANTID" "$ADMINROLEID"
 
 ##Create another tenant. This tenant will hold all the OpenStack services.
 if [ ! -n "$SERVTENANTID" ]
 then
-	SERVTENATID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 tenant-create --name service --description "Service Tenant" | grep "id" | sed 's/ //g')
+	SERVTENATID=$(func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "service")
 	func_set_value "SERVTENANTID" $SERVTENANTID
 fi
 
 if [ ! -n "$SERVGLANCEID" ]
 then
-	SERVGLANCEID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create --tenant-id "$SERVTENANTID" --name glance --pass glance | grep "id" | sed 's/ //g')
-	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user-id "$SERVGALNCEID" --tenant-id "$SERVTENANTID" --role-id "$ADMINROLEID"
+	SERVGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "glance" "glance")
+	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVGALNCEID" "$SERVTENANTID" "$ADMINROLEID"
 fi
 
 if [ ! -n "$SERVNOVAID" ]
 then
-	SERVNOVAID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create --tenant-id "$SERVTENANTID" --name nova --pass nova | grep "id" | sed 's/ //g')
-	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user-id "$SERVNOVAID" --tenant-id "$SERVTENANTID" --role-id "$ADMINROLEID"
+	SERVNOVAID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "nova" "nova")
+	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVNOVAID" "$SERVTENANTID" "$ADMINROLEID"
 fi
 
 if [ ! -n "$SERVEC2ID" ]
 then
-	SERVEC2ID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create --tenant-id "$SERVTEANTID" --name ec2 --pass ec2 | grep "id" | sed 's/ //g')
-	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user-id "$SERVEC2ID" --tenant-id  "$SERVTENANTID" --role-id "$ADMINROLEID"
+	SERVEC2ID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTEANTID" "ec2" "ec2")
+	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVEC2ID" "$SERVTENANTID" "$ADMINROLEID"
 fi
 
 if [ ! -n "$SERVSWIFTID" ]
 then
-	SERVSWIFTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create --tenant-id "$SERVTENANTID" --name swift --pass swiftpass | grep "id" | sed 's/ //g')
-	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user-id "$SERVSWIFTID" --tenant-id "$SERVTENANTID" --role-id "$ADMINROLEID"
+	SERVSWIFTID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "swift" "swiftpass")
+	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVSWIFTID" "$SERVTENANTID" "$ADMINROLEID"
 fi
 
 func_replace_param "/etc/keystone/keystone.conf" "driver" "keystone.catalog.backends.sql.Catalog"
+
