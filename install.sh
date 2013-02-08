@@ -14,9 +14,6 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [ 1 -eq 6 ]
-then
-
 ##Run all the prerequisites
 func_pre
 
@@ -160,8 +157,6 @@ fi
 ##Add the admin user to the admin role. This command produces no output.
 func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$ADMINUSERID" "$DEFTENANTID" "$ADMINROLEID"
 
-fi
-
 ##Create another tenant. This tenant will hold all the OpenStack services.
 func_echo "Creating tenant for OpenStack services"
 if [ ! -n "$SERVTENANTID" ]
@@ -206,7 +201,3 @@ then
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVSWIFTID" "$SERVTENANTID" "$ADMINROLEID"
 	func_set_value "SERVSWIFTID" $SERVSWIFTID
 fi
-
-exit
-
-func_replace_param "/etc/keystone/keystone.conf" "driver" "keystone.catalog.backends.sql.Catalog"
