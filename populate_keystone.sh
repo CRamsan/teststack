@@ -75,7 +75,6 @@ then
 	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERNOVAID" "$SERVTENANTID" "$ADMINROLEID"
 	func_set_value "USERNOVAID" $USERNOVAID
- 	func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "nova" "compute" "Compute Service"
 fi
 
 if [ ! -n "$USERGLANCEID" ]
