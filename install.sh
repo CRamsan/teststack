@@ -175,6 +175,25 @@ then
 	func_set_value "SERVGLANCEID" $SERVGLANCEID
 fi
 
+if [ ! -n "$SERVCINDERID" ]
+then
+        func_echo "Creating user Cinder"
+        SERVCINDERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "cinder" "cinder")
+        func_echo "Adding user to service tenant"
+        func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVCINDERID" "$SERVTENANTID" "$ADMINROLEID"
+        func_set_value "SERVCINDERID" $SERVCINDERID
+fi
+
+if [ ! -n "$SERVQUANTUMID" ]
+then
+        func_echo "Creating user Quantum"
+        SERVGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "quantum" "quantum")
+        func_echo "Adding user to service tenant"
+        func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVQUANTUMID" "$SERVTENANTID" "$ADMINROLEID"
+        func_set_value "SERVQUANTUMID" $SERVQUANTUMID
+fi
+
+
 if [ ! -n "$SERVNOVAID" ]
 then
 	func_echo "Creating user Nova"
