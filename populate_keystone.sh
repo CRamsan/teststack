@@ -71,7 +71,7 @@ fi
 if [ ! -n "$USERNOVAID" ]
 then
 	func_echo "Creating user Nova"
-	SERVNOVAID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "nova" "nova")
+	USERNOVAID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "nova" "nova")
 	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERNOVAID" "$SERVTENANTID" "$ADMINROLEID"
 	func_set_value "USERNOVAID" $USERNOVAID
@@ -81,7 +81,7 @@ fi
 if [ ! -n "$USERGLANCEID" ]
 then
 	func_echo "Creating user Glance"
-	SERVGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "glance" "glance")
+	USERGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "glance" "glance")
 	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERGLANCEID" "$SERVTENANTID" "$ADMINROLEID"
 	func_set_value "USERGLANCEID" $USERGLANCEID
@@ -90,7 +90,7 @@ fi
 if [ ! -n "$USERCINDERID" ]
 then
         func_echo "Creating user Cinder"
-        SERVCINDERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "cinder" "cinder")
+        USERCINDERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "cinder" "cinder")
         func_echo "Adding user to service tenant"
         func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERCINDERID" "$SERVTENANTID" "$ADMINROLEID"
         func_set_value "USERCINDERID" $USERCINDERID
@@ -99,7 +99,7 @@ fi
 if [ ! -n "$USERQUANTUMID" ]
 then
         func_echo "Creating user Quantum"
-        SERVGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "quantum" "quantum")
+        USERGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "quantum" "quantum")
         func_echo "Adding user to service tenant"
         func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERQUANTUMID" "$SERVTENANTID" "$ADMINROLEID"
         func_set_value "USERQUANTUMID" $USERQUANTUMID
@@ -108,7 +108,7 @@ fi
 if [ ! -n "$USEREC2ID" ]
 then
 	func_echo "Creating user EC2"
-	SERVEC2ID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "ec2" "ec2")
+	USEREC2ID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "ec2" "ec2")
 	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USEREC2ID" "$SERVTENANTID" "$ADMINROLEID"
 	func_set_value "USEREC2ID" $USEREC2ID
@@ -117,19 +117,11 @@ fi
 if [ ! -n "$USERSWIFTID" ]
 then
 	func_echo "Creating user Swift"
-	SERVSWIFTID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "swift" "swiftpass")
+	USERSWIFTID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "swift" "swiftpass")
 	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERSWIFTID" "$SERVTENANTID" "$ADMINROLEID"
 	func_set_value "USERSWIFTID" $USERSWIFTID
 fi
-
-192.168.0.50	keystone
-192.168.0.51	glance
-192.168.0.52	cinder
-192.168.0.53	horizon
-192.168.0.54	swift
-192.168.0.55	quantum
-192.168.0.56	nova
 
 func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "nova" "compute" "Compute Service" "192.168.0.56"
 func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "cinder" "volume" "Volume Service" "192.168.0.52"
