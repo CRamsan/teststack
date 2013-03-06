@@ -38,6 +38,7 @@ function func_install_my-sql {
 		echo mysql-server mysql-server/root_password_again select $PASSWORD | debconf-set-selections
 	fi
 	func_install mysql-server
+	func_install python-mysqldb
 }
 
 function funct_add_cloud_archive {
