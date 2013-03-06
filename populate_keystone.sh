@@ -99,7 +99,7 @@ fi
 if [ ! -n "$USERQUANTUMID" ]
 then
         func_echo "Creating user Quantum"
-        USERGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "quantum" "quantum")
+        USERQUANTUMID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "quantum" "quantum")
         func_echo "Adding user to service tenant"
         func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERQUANTUMID" "$SERVTENANTID" "$ADMINROLEID"
         func_set_value "USERQUANTUMID" $USERQUANTUMID
