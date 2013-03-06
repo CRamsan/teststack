@@ -5,6 +5,7 @@
 localrc="localrc"
 
 source functions.sh
+source $localrc
 
 ###################################################################################
 
@@ -14,12 +15,15 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+if [ 1 -lt 0  ]
+then
+
 ##Run all the prerequisites
 func_pre
 
 ##Add the Ubuntu Cloud Archive to the repository list.
 ##This command will also update and upgrade the system.
-#funct_add_cloud_archive
+funct_add_cloud_archive
 
 ##Install NTP, set up the NTP server on your controller node so that it 
 ##receives data by modifying the ntp.conf file and restart the service.
@@ -98,6 +102,8 @@ fi
 
 ##Configure Keystone to use mysql.
 func_replace_param "/etc/keystone/keystone.conf" "connection" "mysql://keystone:$KEYSTONEPASS@$KEYSTONEIP/keystone"
+
+fi
 
 ##Check for the existance of an AdminToken.
 if [ ! -n "$ADMINTOKEN" ]
