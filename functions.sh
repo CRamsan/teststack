@@ -156,7 +156,7 @@ function func_user_role_add {
 	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add \
 		--user-id "$USERID" \
 		--tenant_id "$TENANTID" \
-		--role "$ROLEID"
+		--role-id "$ROLEID"
 }
 
 function func_create_service {
