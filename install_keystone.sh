@@ -59,6 +59,9 @@ func_replace_param "/etc/keystone/keystone.conf" "connection" "mysql://keystone:
 ##And set the admin-token
 func_replace_param "/etc/keystone/keystone.conf" "admin_token" "$ADMINTOKEN"
 
+##Set the driver to sql
+func_replace_param "/etc/keystone/keystone.conf" "[catalog] driver" "keystone.catalog.backends.sql.Catalog"
+
 ##Next, restart the keystone service so that it picks up the new database configuration.
 ##Lastly, initialize the new keystone database.
 service keystone restart

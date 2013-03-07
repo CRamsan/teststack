@@ -15,7 +15,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-func_set_value "[catalog] driver" "keystone.catalog.backends.sql.Catalog"
+func_replace_param "/etc/keystone/keystone.conf" "[catalog] driver" "keystone.catalog.backends.sql.Catalog"
 
 ##Check for the existance of a default tenant's name and their ID.
 if [ ! -n "$DEFTENANTNAME" ] || [ ! -n "$DEFTENANTID" ]
