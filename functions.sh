@@ -41,8 +41,8 @@ function func_install_my-sql {
 }
 
 function funct_add_cloud_archive {
-#	apt-get update
-#	apt-get upgrade -y
+	apt-get update
+	apt-get upgrade -y
 	apt-get install ubuntu-cloud-keyring
 	echo "deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates/grizzly main" > /etc/apt/sources.list.d/grizzly.list	
 	apt-get update
@@ -93,10 +93,26 @@ function func_replace_param {
 	parameter=$2
 	newvalue=$3
 	func_echo "In file $file - Parameter \"$parameter\" is been set to \"$newvalue\""
+echo	oldline=$(sed 's/ =/=/g' $file | grep "^$parameter=")
 	oldline=$(sed 's/ =/=/g' $file | grep "^$parameter=")
+	if [ ! -n "$oldline" ]
+	then
+		oldline=$(sed 's/ =/=/g' $file | grep "^# $parameter=")
+	fi
+	if [ ! -n "$oldline" ]
+	then
+		func_echo "Parameter not found, please do the change manually"
+		exit
+	fi
+echo	oldline=$(sed 's/ =/=/g' $file | grep "^$parameter=")
+	oldline=$(sed 's/ =/=/g' $file | grep "^$parameter=")
+echo	sed -i 's/ =/=/g' $file
 	sed -i 's/ =/=/g' $file
+echo	newvaluefixed=$(echo $newvalue | sed -e 's/[]\/()$*.^|[]/\\&/g')
 	newvaluefixed=$(echo $newvalue | sed -e 's/[]\/()$*.^|[]/\\&/g')
+echo	oldlinefixed=$(echo $oldline | sed -e 's/[]\/()$*.^|[]/\\&/g')
 	oldlinefixed=$(echo $oldline | sed -e 's/[]\/()$*.^|[]/\\&/g')
+echo	sed -i "s/$oldlinefixed/$parameter=$newvaluefixed/g" $file
 	sed -i "s/$oldlinefixed/$parameter=$newvaluefixed/g" $file
 	newline=$(cat $file | grep "^$parameter=")
 	func_echo $oldline

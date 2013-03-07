@@ -19,7 +19,7 @@ func_pre
 
 ##Add the Ubuntu Cloud Archive to the repository list.
 ##This command will also update and upgrade the system.
-funct_add_cloud_archive
+#funct_add_cloud_archive
 
 ##Install NTP, set up the NTP server on your controller node so that it 
 ##receives data by modifying the ntp.conf file and restart the service.
