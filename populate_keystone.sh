@@ -15,57 +15,6 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-###################################################################################
-
-##Install the identity service, Keystone!
-##Install the package
-func_install keystone
-#Delete the keystone.db file created in the /var/lib/keystone directory.
-rm /var/lib/keystone/keystone.db
-
-##Check if keystone password exists,
-##if it does not, ask the user for one.
-if [ ! -n "$KEYSTONEPASS" ]
-then
-	func_set_password "KEYSTONEPASS" "Keystone user"
-	KEYSTONEPASS=$(func_retrieve_value "KEYSTONEPASS")
-fi
-
-##Give Keystone access to the database.
-mysql -u root -p"$MYSQLPASS" <<EOF
-CREATE DATABASE keystone;
-GRANT ALL ON keystone.* TO 'keystone'@'%' IDENTIFIED BY "$KEYSTONEPASS";
-GRANT ALL ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY "$KEYSTONEPASS";
-EOF
-
-##Check the ip of the keystone service.
-if [ ! -n "$KEYSTONEIP" ]
-then
-	echo "On which host has Keystone been installed? Please use the IP and not the hostname"
-	KEYSTONEIP=$(func_ask_user)
-	func_set_value "KEYSTONEIP" $KEYSTONEIP
-fi
-
-##Configure Keystone to use mysql.
-func_replace_param "/etc/keystone/keystone.conf" "connection" "mysql://keystone:$KEYSTONEPASS@$KEYSTONEIP/keystone"
-
-fi
-
-##Check for the existance of an AdminToken.
-if [ ! -n "$ADMINTOKEN" ]
-then
-	func_set_password "ADMINTOKEN" "Admin token"
-	ADMINTOKEN=$(func_retrieve_value "ADMINTOKEN")
-fi
-
-##And set the admin-token
-func_replace_param "/etc/keystone/keystone.conf" "admin_token" "$ADMINTOKEN"
-
-##Next, restart the keystone service so that it picks up the new database configuration.
-##Lastly, initialize the new keystone database.
-service keystone restart
-keystone-manage db_sync
-
 ##Check for the existance of a default tenant's name and their ID.
 if [ ! -n "$DEFTENANTNAME" ] || [ ! -n "$DEFTENANTID" ]
 then
@@ -118,6 +67,7 @@ then
 	func_set_value "SERVTENANTID" $SERVTENANTID
 fi
 
+##Start with the creation of users for the services
 if [ ! -n "$SERVGLANCEID" ]
 then
 	func_echo "Creating user Glance"

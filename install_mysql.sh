@@ -7,11 +7,13 @@ localrc="localrc"
 source functions.sh
 source $localrc
 
-func_echo "Configure NTP"
+###################################################################################
 
-sed -i 's/server ntp.ubuntu.com/server ntp.ubuntu.com\nserver 127.127.1.0\nfudge 127.127.1.0 stratum 10/g' /etc/ntp.conf
-func_echo "Restart NTP service"
-service ntp restart
+##Check for admin rights
+if [[ $EUID -ne 0 ]]; then
+   echo "This script must be run as root" 1>&2
+   exit 1
+fi
 
 ##Install MySQL
 ##During the install, you'll be prompted for the mysql root password. 
@@ -41,15 +43,3 @@ then
 else
 	func_echo "Database access successful"
 fi
-
-##Install RabbitMQ
-func_echo "Install RabbitMQ"
-func_install rabbitmq-server
-
-if [ ! -n "$RABBITPASS" ]
-then
-        func_set_password "RABBITPASS" "RabbitMQ"
-        RABBITPASS=$(func_retrieve_value "RABBITPASS")
-fi
-
-rabbitmqctl change_password guest $RABBITPASS

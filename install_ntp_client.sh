@@ -15,9 +15,9 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-##Run all the prerequisites
-func_pre
-
-##Add the Ubuntu Cloud Archive to the repository list.
-##This command will also update and upgrade the system.
-funct_add_cloud_archive
+if [ ! -n "$NTPIP" ]
+then
+	echo "On which host has NTP been installed? Please use the IP and not the hostname"
+	NTPIP=$(func_ask_user)
+	func_set_value "NTPIP" $NTPIP
+fi

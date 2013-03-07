@@ -94,32 +94,15 @@ function func_replace_param {
 	parameter=$2
 	newvalue=$3
 	func_echo "In file $file - Parameter \"$parameter\" is been set to \"$newvalue\""
-exit
-echo	oldline sed 's/ =/=/g' $file  grep "^$parameter="
-	oldline=$(sed 's/ =/=/g' $file | grep "^$parameter=")
-	if [ ! -n "$oldline" ]
-	then
-		oldline=$(sed 's/ =/=/g' $file | grep "^# $parameter=")
-	fi
-	if [ ! -n "$oldline" ]
-	then
-		func_echo "Parameter not found, please do the change manually"
-		exit
-	fi
-echo	oldline=$(sed 's/ =/=/g' $file | grep "^$parameter=")
-	oldline=$(sed 's/ =/=/g' $file | grep "^$parameter=")
-echo	sed -i 's/ =/=/g' $file
-	sed -i 's/ =/=/g' $file
-echo	newvaluefixed=$(echo $newvalue | sed -e 's/[]\/()$*.^|[]/\\&/g')
-	newvaluefixed=$(echo $newvalue | sed -e 's/[]\/()$*.^|[]/\\&/g')
-echo	oldlinefixed=$(echo $oldline | sed -e 's/[]\/()$*.^|[]/\\&/g')
-	oldlinefixed=$(echo $oldline | sed -e 's/[]\/()$*.^|[]/\\&/g')
-echo	sed -i "s/$oldlinefixed/$parameter=$newvaluefixed/g" $file
-	sed -i "s/$oldlinefixed/$parameter=$newvaluefixed/g" $file
-	newline=$(cat $file | grep "^$parameter=")
-	func_echo $oldline
-	func_echo "V-V-V-V-V-V-V-V"
-	func_echo $newline
+	func_echo "Press ENTER to open a text editor"
+	read
+	while [ $answer != "yes" & $answer != "YES" ]
+	do
+		nano $file
+		func_echo "Are you done doing changes? [yes/NO]"
+		read -e answer
+		func_echo "In file $file - Parameter \"$parameter\" is been set to \"$newvalue\""
+	done
 }
 
 function func_create_tenant {

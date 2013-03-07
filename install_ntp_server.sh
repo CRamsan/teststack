@@ -15,9 +15,10 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-##Run all the prerequisites
-func_pre
+func_echo "Install NTP"
+func_install ntp
 
-##Add the Ubuntu Cloud Archive to the repository list.
-##This command will also update and upgrade the system.
-funct_add_cloud_archive
+func_echo "Configure NTP"
+sed -i 's/server ntp.ubuntu.com/server ntp.ubuntu.com\nserver 127.127.1.0\nfudge 127.127.1.0 stratum 10/g' /etc/ntp.conf
+func_echo "Restart NTP service"
+service ntp restart

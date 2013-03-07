@@ -15,9 +15,15 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-##Run all the prerequisites
-func_pre
+##Install RabbitMQ
+func_echo "Install RabbitMQ"
+func_install rabbitmq-server
 
-##Add the Ubuntu Cloud Archive to the repository list.
-##This command will also update and upgrade the system.
-funct_add_cloud_archive
+if [ ! -n "$RABBITPASS" ]
+then
+        func_set_password "RABBITPASS" "RabbitMQ"
+        RABBITPASS=$(func_retrieve_value "RABBITPASS")
+fi
+
+rabbitmqctl change_password guest $RABBITPASS
+
