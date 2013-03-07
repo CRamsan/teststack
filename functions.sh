@@ -93,16 +93,25 @@ function func_replace_param {
 	file=$1
 	parameter=$2
 	newvalue=$3
+	answer=""
 	func_echo "In file $file - Parameter \"$parameter\" is been set to \"$newvalue\""
+	func_echo "The final result would look something like: \"$parameter = $newvalue\""
 	func_echo "Press ENTER to open a text editor"
 	read
+	nano $file
+	func_echo "The final result would look something like: \"$parameter = $newvalue\""
+        func_echo "Did you finished doing all the required changes? [yes/NO]"
+        read -e answer
 	while [ "$answer" != "yes" ] && [ "$answer" != "YES" ]
 	do
 		nano $file
-		func_echo "Are you done doing changes? [yes/NO]"
+		func_echo "The final result would look something like: \"$parameter = $newvalue\""
+		func_echo "Did you finished doing all the required changes? [yes/NO]"
 		read -e answer
-		func_echo "In file $file - Parameter \"$parameter\" is been set to \"$newvalue\""
 	done
+	func_echo "Changes to $file completed"
+	echo
+	echo
 }
 
 function func_create_tenant {
