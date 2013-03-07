@@ -112,7 +112,7 @@ function func_create_tenant {
 	DESCRIPTION="No description"
        	TENANTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 tenant-create \
 		--name "$TENANTNAME" \
-		--description "$DESCRIPTION \
+		--description "$DESCRIPTION" \
 		| 's/ //g' | grep "|id|" |cut -d'|' -f3)
 	echo $TENANTID
 }
@@ -126,7 +126,7 @@ function func_create_user {
 	USERID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create \
 		--tenant_id "$TENANTID" \
 		--name "$USERNAME" \
-		--pass "$PASSWORD \
+		--pass "$PASSWORD" \
 		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
 	echo $USERID
 }
@@ -136,7 +136,7 @@ function func_create_role {
 	KEYSTONEIP=$2
 	ROLENAME=$3
 	ROLEID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 role-create \
-		--name "$ROLENAME \
+		--name "$ROLENAME" \
 		| 's/ //g'  | grep "|id|" |cut -d'|' -f3)
 	echo $ROLEID
 }
@@ -163,7 +163,7 @@ function func_create_service {
 	SERVID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 service-create \
 		--name="$SERVNAME" \
 		--type="$SERVTYPE"  \
-		--description="$SERVDESC \
+		--description="$SERVDESC" \
 		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
 
 	if [ "$SERVTYPE" eq "compute" ]
