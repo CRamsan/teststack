@@ -68,13 +68,27 @@ then
 fi
 
 ##Start with the creation of users for the services
+if [ ! -n "$SERVNOVAID" ]
+then
+	SERVNOVANAME="nova"
+	SERVNOVAPASS="nova"
+	SERVNOVAID=$(func_create_user_in_role "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "$SERVNOVANAME" "$SERVNOVAPAS" "$SERVTENANTID" "$ADMINROLEID")
+	func_set_value "SERVNOVAID" $SERVNOVAID
+	func_set_value "SERVNOVANAME" $SERVNOVANAME
+	func_set_value "SERVNOVAPASS" $SERVNOVAPASS
+fi
+
 if [ ! -n "$SERVGLANCEID" ]
 then
 	func_echo "Creating user Glance"
-	SERVGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "glance" "glance")
+	SERVGLANCENAME="glance"
+	SERVGLANCEPASS="glance"
+	SERVGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "$SERVGLANCENAME" "SERVGLANCEPASS")
 	func_echo "Adding user to service tenant"
 	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVGLANCEID" "$SERVTENANTID" "$ADMINROLEID"
 	func_set_value "SERVGLANCEID" $SERVGLANCEID
+	func_set_value "SERVGLANCENAME" $SERVGLANCEPASS
+	func_set_value "SERVGLANCEPASS" $SERVGLANCENAME
 fi
 
 if [ ! -n "$SERVCINDERID" ]
@@ -95,15 +109,6 @@ then
         func_set_value "SERVQUANTUMID" $SERVQUANTUMID
 fi
 
-
-if [ ! -n "$SERVNOVAID" ]
-then
-	func_echo "Creating user Nova"
-	SERVNOVAID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "nova" "nova")
-	func_echo "Adding user to service tenant"
-	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVNOVAID" "$SERVTENANTID" "$ADMINROLEID"
-	func_set_value "SERVNOVAID" $SERVNOVAID
-fi
 
 if [ ! -n "$SERVEC2ID" ]
 then

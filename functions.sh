@@ -141,6 +141,19 @@ function func_user_role_add {
 	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user "$USERID" --tenant_id "$TENANTID" --role "$ROLEID"
 }
 
+function func_create_user_in_role {
+        ADMINTOKEN=$1
+        KEYSTONEIP=$2
+        TENANTID=$3
+        USERNAME=$4
+        PASSWORD=$5
+	TENANTID=$6
+	ROLEID=$7
+	USERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$TENANTID" "$USERNAME" "$PASSWORD")
+	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERID" "$TENANTID" "$ROLEID"
+	echo $USERID
+}
+
 function func_echo {
 	MSG=$1
 	echo -e "\E[32m$MSG"
