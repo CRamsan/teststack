@@ -96,7 +96,7 @@ function func_replace_param {
 	func_echo "In file $file - Parameter \"$parameter\" is been set to \"$newvalue\""
 	func_echo "Press ENTER to open a text editor"
 	read
-	while [ $answer != "yes" & $answer != "YES" ]
+	while [ "$answer" != "yes" ] && [ "$answer" != "YES" ]
 	do
 		nano $file
 		func_echo "Are you done doing changes? [yes/NO]"
