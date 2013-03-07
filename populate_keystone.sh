@@ -15,6 +15,8 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+func_set_value "[catalog] driver" "keystone.catalog.backends.sql.Catalog"
+
 ##Check for the existance of a default tenant's name and their ID.
 if [ ! -n "$DEFTENANTNAME" ] || [ ! -n "$DEFTENANTID" ]
 then
@@ -67,63 +69,76 @@ then
 	func_set_value "SERVTENANTID" $SERVTENANTID
 fi
 
-##Start with the creation of users for the services
-if [ ! -n "$SERVNOVAID" ]
+##Start with the creation of users for the services that use Keystone
+if [ ! -n "$USERNOVAID" ]
 then
-	SERVNOVANAME="nova"
-	SERVNOVAPASS="nova"
-	SERVNOVAID=$(func_create_user_in_role "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "$SERVNOVANAME" "$SERVNOVAPAS" "$SERVTENANTID" "$ADMINROLEID")
-	func_set_value "SERVNOVAID" $SERVNOVAID
-	func_set_value "SERVNOVANAME" $SERVNOVANAME
-	func_set_value "SERVNOVAPASS" $SERVNOVAPASS
+	func_echo "Creating user Nova"
+	SERVNOVAID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "nova" "nova")
+	func_echo "Adding user to service tenant"
+	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERNOVAID" "$SERVTENANTID" "$ADMINROLEID"
+	func_set_value "USERNOVAID" $USERNOVAID
+ 	func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "nova" "compute" "Compute Service"
 fi
 
-if [ ! -n "$SERVGLANCEID" ]
+if [ ! -n "$USERGLANCEID" ]
 then
 	func_echo "Creating user Glance"
-	SERVGLANCENAME="glance"
-	SERVGLANCEPASS="glance"
-	SERVGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "$SERVGLANCENAME" "SERVGLANCEPASS")
+	SERVGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "glance" "glance")
 	func_echo "Adding user to service tenant"
-	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVGLANCEID" "$SERVTENANTID" "$ADMINROLEID"
-	func_set_value "SERVGLANCEID" $SERVGLANCEID
-	func_set_value "SERVGLANCENAME" $SERVGLANCEPASS
-	func_set_value "SERVGLANCEPASS" $SERVGLANCENAME
+	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERGLANCEID" "$SERVTENANTID" "$ADMINROLEID"
+	func_set_value "USERGLANCEID" $USERGLANCEID
 fi
 
-if [ ! -n "$SERVCINDERID" ]
+if [ ! -n "$USERCINDERID" ]
 then
         func_echo "Creating user Cinder"
         SERVCINDERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "cinder" "cinder")
         func_echo "Adding user to service tenant"
-        func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVCINDERID" "$SERVTENANTID" "$ADMINROLEID"
-        func_set_value "SERVCINDERID" $SERVCINDERID
+        func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERCINDERID" "$SERVTENANTID" "$ADMINROLEID"
+        func_set_value "USERCINDERID" $USERCINDERID
 fi
 
-if [ ! -n "$SERVQUANTUMID" ]
+if [ ! -n "$USERQUANTUMID" ]
 then
         func_echo "Creating user Quantum"
         SERVGLANCEID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "quantum" "quantum")
         func_echo "Adding user to service tenant"
-        func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVQUANTUMID" "$SERVTENANTID" "$ADMINROLEID"
-        func_set_value "SERVQUANTUMID" $SERVQUANTUMID
+        func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERQUANTUMID" "$SERVTENANTID" "$ADMINROLEID"
+        func_set_value "USERQUANTUMID" $USERQUANTUMID
 fi
 
-
-if [ ! -n "$SERVEC2ID" ]
+if [ ! -n "$USEREC2ID" ]
 then
 	func_echo "Creating user EC2"
 	SERVEC2ID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "ec2" "ec2")
 	func_echo "Adding user to service tenant"
-	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVEC2ID" "$SERVTENANTID" "$ADMINROLEID"
-	func_set_value "SERVEC2ID" $SERVEC2ID
+	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USEREC2ID" "$SERVTENANTID" "$ADMINROLEID"
+	func_set_value "USEREC2ID" $USEREC2ID
 fi
 
-if [ ! -n "$SERVSWIFTID" ]
+if [ ! -n "$USERSWIFTID" ]
 then
 	func_echo "Creating user Swift"
 	SERVSWIFTID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$SERVTENANTID" "swift" "swiftpass")
 	func_echo "Adding user to service tenant"
-	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$SERVSWIFTID" "$SERVTENANTID" "$ADMINROLEID"
-	func_set_value "SERVSWIFTID" $SERVSWIFTID
+	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERSWIFTID" "$SERVTENANTID" "$ADMINROLEID"
+	func_set_value "USERSWIFTID" $USERSWIFTID
 fi
+
+192.168.0.50	keystone
+192.168.0.51	glance
+192.168.0.52	cinder
+192.168.0.53	horizon
+192.168.0.54	swift
+192.168.0.55	quantum
+192.168.0.56	nova
+
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "nova" "compute" "Compute Service" "192.168.0.56"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "cinder" "volume" "Volume Service" "192.168.0.52"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "glance" "image" "Image Service" "192.168.0.51"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "swift" "object-store" "Object Storage Service" "192.168.0.54"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "keystone" "indentity" "Identity Service" "192.168.0.50"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "ec2" "ec2" "EC2 Compatibility Service" "192.168.0.56"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "quantum" "network" "Network Service" "192.168.0.55"
+
+

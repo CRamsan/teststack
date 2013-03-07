@@ -110,7 +110,10 @@ function func_create_tenant {
 	KEYSTONEIP=$2
 	TENANTNAME=$3
 	DESCRIPTION="No description"
-       	TENANTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 tenant-create --name "$TENANTNAME" --description "$DESCRIPTION" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
+       	TENANTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 tenant-create \
+		--name "$TENANTNAME" \
+		--description "$DESCRIPTION \
+		| 's/ //g' | grep "|id|" |cut -d'|' -f3)
 	echo $TENANTID
 }
 
@@ -120,7 +123,11 @@ function func_create_user {
 	TENANTID=$3
 	USERNAME=$4
 	PASSWORD=$5
-	USERID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create --tenant_id "$TENANTID" --name "$USERNAME" --pass "$PASSWORD" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
+	USERID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create \
+		--tenant_id "$TENANTID" \
+		--name "$USERNAME" \
+		--pass "$PASSWORD \
+		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
 	echo $USERID
 }
 
@@ -128,7 +135,9 @@ function func_create_role {
 	ADMINTOKEN=$1
 	KEYSTONEIP=$2
 	ROLENAME=$3
-	ROLEID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 role-create --name "$ROLENAME" | grep "id" | sed 's/ //g' | cut -d'|' -f3)
+	ROLEID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 role-create \
+		--name "$ROLENAME \
+		| 's/ //g'  | grep "|id|" |cut -d'|' -f3)
 	echo $ROLEID
 }
 
@@ -138,21 +147,93 @@ function func_user_role_add {
 	USERID=$3
 	TENANTID=$4
 	ROLEID=$5
-	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add --user "$USERID" --tenant_id "$TENANTID" --role "$ROLEID"
+	keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-role-add \
+		--user "$USERID" \
+		--tenant_id "$TENANTID" \
+		--role "$ROLEID"
 }
 
-function func_create_user_in_role {
+function func_create_service {
         ADMINTOKEN=$1
         KEYSTONEIP=$2
-        TENANTID=$3
-        USERNAME=$4
-        PASSWORD=$5
-	TENANTID=$6
-	ROLEID=$7
-	USERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$TENANTID" "$USERNAME" "$PASSWORD")
-	func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERID" "$TENANTID" "$ROLEID"
-	echo $USERID
+        SERVNAME=$3
+        SERVTYPE=$4
+        SERVDESC=$5
+	SERVIP=$6
+	SERVID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 service-create \
+		--name="$SERVNAME" \
+		--type="$SERVTYPE"  \
+		--description="$SERVDESC \
+		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+
+	if [ "$SERVTYPE" eq "compute" ]
+	then
+		ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
+		--region "RegionOne" \
+		--service_id "$SERVID" \
+		--publicurl "http://$SERVIP:8774/v2/%(tenant_id)s" \
+		--adminurl "http://$SERVIP:8774/v2/%(tenant_id)s" \
+		--internalurl "http://$SERVIP:8774/v2/%(tenant_id)s" \
+		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+	elif [ "$SERVTYPE" eq "volume" ]
+	then
+                ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
+                --region "RegionOne" \
+                --service_id "$SERVID" \
+		--publicurl "http://$SERVIP:8776/v1/%(tenant_id)s" \
+		--adminurl "http://$SERVIP:8776/v1/%(tenant_id)s" \
+		--internalurl "http://$SERVIP:8776/v1/%(tenant_id)s" \
+		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+        elif [ "$SERVTYPE" eq "image" ]
+	then
+                ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
+                --region "RegionOne" \
+                --service_id "$SERVID" \
+		--publicurl "http://$SERVIP:9292" \
+		--adminurl "http://$SERVIP:9292" \
+		--internalurl "http://$SERVIP:9292" \
+		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+        elif [ "$SERVTYPE" eq "object-store" ]
+	then
+                ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
+                --region "RegionOne" \
+                --service_id "$SERVID" \
+		--publicurl "http://$SERVIP:8080/v1/AUTH_%(tenant_id)s" \
+		--adminurl "http://$SERVIP:8080/v1" \
+		--internalurl "http://$SERVIP:8080/v1/AUTH_%(tenant_id)s" \
+		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+        elif [ "$SERVTYPE" eq "identity" ]
+	then
+                ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
+                --region "RegionOne" \
+                --service_id "$SERVID" \
+		--publicurl "http://$SERVIP0:5000/v2.0" \
+		--adminurl "http://$SERVIP:35357/v2.0" \
+		--internalurl "http://$SERVIP:5000/v2.0" \
+		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+        elif [ "$SERVTYPE" eq "ec2" ]
+	then
+                ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
+                --region "RegionOne" \
+                --service_id "$SERVID" \
+		--publicurl "http://$SERVIP:8773/services/Cloud" \
+		--adminurl "http://$SERVIP:8773/services/Admin" \
+		--internalurl "http://$SERVIP:8773/services/Cloud" \
+		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+        elif [ "$SERVTYPE" eq "network" ]
+	then
+                ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
+                --region "RegionOne" \
+                --service_id "$SERVID" \
+		--publicurl "http://$SERVIP:9696/v2" \
+		--adminurl "http://$SERVIP:9696/v2" \
+		--internalurl "http://$SERVIP:9696/v2" \
+		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+	fi
+	echo $ENDPOINTID
 }
+
+
 
 function func_echo {
 	MSG=$1
