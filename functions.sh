@@ -121,8 +121,7 @@ function func_create_tenant {
 	DESCRIPTION="No description"
        	TENANTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 tenant-create \
 		--name "$TENANTNAME" \
-		--description "$DESCRIPTION" \
-		| 's/ //g' | grep "|id|" |cut -d'|' -f3)
+		--description "$DESCRIPTION" | sed 's/ //g' | grep "|id|" |cut -d'|' -f3)
 	echo $TENANTID
 }
 
@@ -135,8 +134,7 @@ function func_create_user {
 	USERID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 user-create \
 		--tenant_id "$TENANTID" \
 		--name "$USERNAME" \
-		--pass "$PASSWORD" \
-		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+		--pass "$PASSWORD" | sed 's/ //g'  | grep "|id|" | cut -d'|' -f3)
 	echo $USERID
 }
 
@@ -145,8 +143,7 @@ function func_create_role {
 	KEYSTONEIP=$2
 	ROLENAME=$3
 	ROLEID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 role-create \
-		--name "$ROLENAME" \
-		| 's/ //g'  | grep "|id|" |cut -d'|' -f3)
+		--name "$ROLENAME" | sed 's/ //g'  | grep "|id|" |cut -d'|' -f3)
 	echo $ROLEID
 }
 
@@ -172,8 +169,7 @@ function func_create_service {
 	SERVID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 service-create \
 		--name="$SERVNAME" \
 		--type="$SERVTYPE"  \
-		--description="$SERVDESC" \
-		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+		--description="$SERVDESC" | sed  's/ //g'  | grep "|id|" | cut -d'|' -f3)
 
 	if [ "$SERVTYPE" eq "compute" ]
 	then
@@ -182,8 +178,7 @@ function func_create_service {
 		--service_id "$SERVID" \
 		--publicurl "http://$SERVIP:8774/v2/%(tenant_id)s" \
 		--adminurl "http://$SERVIP:8774/v2/%(tenant_id)s" \
-		--internalurl "http://$SERVIP:8774/v2/%(tenant_id)s" \
-		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+		--internalurl "http://$SERVIP:8774/v2/%(tenant_id)s" | sed 's/ //g'  | grep "|id|" | cut -d'|' -f3)
 	elif [ "$SERVTYPE" eq "volume" ]
 	then
                 ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
@@ -191,8 +186,7 @@ function func_create_service {
                 --service_id "$SERVID" \
 		--publicurl "http://$SERVIP:8776/v1/%(tenant_id)s" \
 		--adminurl "http://$SERVIP:8776/v1/%(tenant_id)s" \
-		--internalurl "http://$SERVIP:8776/v1/%(tenant_id)s" \
-		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+		--internalurl "http://$SERVIP:8776/v1/%(tenant_id)s" | sed 's/ //g'  | grep "|id|" | cut -d'|' -f3)
         elif [ "$SERVTYPE" eq "image" ]
 	then
                 ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
@@ -200,8 +194,7 @@ function func_create_service {
                 --service_id "$SERVID" \
 		--publicurl "http://$SERVIP:9292" \
 		--adminurl "http://$SERVIP:9292" \
-		--internalurl "http://$SERVIP:9292" \
-		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+		--internalurl "http://$SERVIP:9292" | sed 's/ //g'  | grep "|id|" | cut -d'|' -f3)
         elif [ "$SERVTYPE" eq "object-store" ]
 	then
                 ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
@@ -209,8 +202,7 @@ function func_create_service {
                 --service_id "$SERVID" \
 		--publicurl "http://$SERVIP:8080/v1/AUTH_%(tenant_id)s" \
 		--adminurl "http://$SERVIP:8080/v1" \
-		--internalurl "http://$SERVIP:8080/v1/AUTH_%(tenant_id)s" \
-		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+		--internalurl "http://$SERVIP:8080/v1/AUTH_%(tenant_id)s" | sed 's/ //g'  | grep "|id|" | cut -d'|' -f3)
         elif [ "$SERVTYPE" eq "identity" ]
 	then
                 ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
@@ -218,8 +210,7 @@ function func_create_service {
                 --service_id "$SERVID" \
 		--publicurl "http://$SERVIP0:5000/v2.0" \
 		--adminurl "http://$SERVIP:35357/v2.0" \
-		--internalurl "http://$SERVIP:5000/v2.0" \
-		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+		--internalurl "http://$SERVIP:5000/v2.0" | sed 's/ //g'  | grep "|id|" | cut -d'|' -f3)
         elif [ "$SERVTYPE" eq "ec2" ]
 	then
                 ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
@@ -227,8 +218,7 @@ function func_create_service {
                 --service_id "$SERVID" \
 		--publicurl "http://$SERVIP:8773/services/Cloud" \
 		--adminurl "http://$SERVIP:8773/services/Admin" \
-		--internalurl "http://$SERVIP:8773/services/Cloud" \
-		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+		--internalurl "http://$SERVIP:8773/services/Cloud" | sed 's/ //g'  | grep "|id|" | cut -d'|' -f3)
         elif [ "$SERVTYPE" eq "network" ]
 	then
                 ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
@@ -236,8 +226,7 @@ function func_create_service {
                 --service_id "$SERVID" \
 		--publicurl "http://$SERVIP:9696/v2" \
 		--adminurl "http://$SERVIP:9696/v2" \
-		--internalurl "http://$SERVIP:9696/v2" \
-		| 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+		--internalurl "http://$SERVIP:9696/v2" 	| sed 's/ //g'  | grep "|id|" | cut -d'|' -f3)
 	fi
 	echo $ENDPOINTID
 }

@@ -15,7 +15,6 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-f
 ##Check for the existance of a default tenant's name and their ID.
 if [ ! -n "$DEFTENANTNAME" ] || [ ! -n "$DEFTENANTID" ]
 then
@@ -31,7 +30,7 @@ fi
 
 ##Check for the existance of an admin user(name, password and ID). If it doess not exist, create one.
 ##This user will belong to the default tenant.
-if [ ! -n "$ADMINUSERNAME" ] || [ ! -n "$ADMINUSERPASS"] || [ ! -n "$ADMINUSERID"]
+if [ ! -n "$ADMINUSERNAME" ] || [ ! -n "$ADMINUSERPASS" ] || [ ! -n "$ADMINUSERID" ]
 then
         echo "What is going to be the name for the admin user?:"
         ADMINUSERNAME=$(func_ask_user)
