@@ -58,7 +58,7 @@ function func_set_value {
 	key=$1
 	val=$2
 	eval "$key=$val"
-        echo "export $key=$val" >> $localrc
+        echo "export $key=$val" >> localrc
 }
 
 function func_set_password {
