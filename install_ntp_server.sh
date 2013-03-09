@@ -22,3 +22,12 @@ func_echo "Configure NTP"
 sed -i 's/server ntp.ubuntu.com/server ntp.ubuntu.com\nserver 127.127.1.0\nfudge 127.127.1.0 stratum 10/g' /etc/ntp.conf
 func_echo "Restart NTP service"
 service ntp restart
+
+##Set the IP for this machine
+if [ ! -n "$NTPIP" ]
+then
+	func_echo "What is the IP of this computer"
+	NTPIP=$(func_ask_user)
+	func_set_value "NTPIP" $NTPIP
+fi
+
