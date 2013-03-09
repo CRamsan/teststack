@@ -51,11 +51,11 @@ func_replace_param "/etc/glance/glance-registry.conf" 	"connection" "mysql://gla
 
 func_replace_param "/etc/glance/glance-api.conf" "admin_tenant_name" 	"service"
 func_replace_param "/etc/glance/glance-api.conf" "admin_user" 		"glance"
-func_replace_param "/etc/glance/glance-api.conf" "admin_password" 	"$RABBITPASS"
+func_replace_param "/etc/glance/glance-api.conf" "admin_password" 	"glance"
 
 func_replace_param "/etc/glance/glance-registry.conf" "admin_tenant_name" 	"service"
 func_replace_param "/etc/glance/glance-registry.conf" "admin_user" 		"glance"
-func_replace_param "/etc/glance/glance-registry.conf" "admin_password" 		"$RABBITPASS"
+func_replace_param "/etc/glance/glance-registry.conf" "admin_password" 		"glance"
 
 func_replace_param "/etc/glance/glance-api.conf" "notifier_strategy" 	"rabbit"
 func_replace_param "/etc/glance/glance-api.conf" "rabbit_password" 	"$RABBITPASS"
@@ -66,8 +66,7 @@ service glance-api restart
 service glance-registry restart
 glance-manage db_sync
 
-exit
-
-echo "export OS_AUTH_URL=\"http://$KEYSTONEIP:5000/v2.0/\" " >> keystonerc
-echo "export SERVICE_ENDPOINT=\"http://$KEYSTONEIP:35357/v2.0\" " >> keystonerc
-echo "export SERVICE_TOKEN=$ADMINTOKEN" >> keystonerc
+echo "export SERVICE_TOKEN=$ADMINTOKEN" > glancerc
+echo "export OS_USERNAME=$ADMINUSERNAME" >> glancerc
+echo "export OS_PASSWORD=$ADMINUSERPASS" >> glancerc
+echo "export OS_TENANT_ID=$DEFTENANTID" >> glancerc
