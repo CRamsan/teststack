@@ -15,7 +15,9 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-if [ -n "$NTPIP" ]
+func_install ntp
+
+if [ ! -n "$NTPIP" ]
 then
 	echo "On which host has NTP been installed? Please use the IP and not the hostname"
 	NTPIP=$(func_ask_user)
