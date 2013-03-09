@@ -70,3 +70,5 @@ echo "export SERVICE_TOKEN=$ADMINTOKEN" > glancerc
 echo "export OS_USERNAME=$ADMINUSERNAME" >> glancerc
 echo "export OS_PASSWORD=$ADMINUSERPASS" >> glancerc
 echo "export OS_TENANT_ID=$DEFTENANTID" >> glancerc
+echo "export OS_AUTH_URL=\"http://$KEYSTONEIP:5000/v2.0/\" " >> glancerc
+#echo "export SERVICE_ENDPOINT=\"http://$KEYSTONEIP:35357/v2.0\" " >> glancerc
