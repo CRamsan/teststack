@@ -45,7 +45,7 @@ function funct_add_cloud_archive {
 	apt-get update
 	apt-get upgrade -y
 	apt-get install ubuntu-cloud-keyring
-	echo "deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates/grizzly main" > /etc/apt/sources.list.d/grizzly.list	
+	echo "deb http://ubuntu-cloud.archive.canonical.com/ubuntu precise-updates/folsom main" > /etc/apt/sources.list.d/grizzly.list	
 	apt-get update
 }
 
