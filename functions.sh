@@ -161,7 +161,6 @@ function func_user_role_add {
 }
 
 function func_create_service {
-	set -x
         ADMINTOKEN=$1
         KEYSTONEIP=$2
         SERVNAME=$3
@@ -234,7 +233,6 @@ function func_create_service {
 	fi
 	func_set_value "$SERVNAME"ENDID "$ENDPOINTID"
 	func_echo "Service $SERVNAME added and configured"
-	set -x
 }
 
 

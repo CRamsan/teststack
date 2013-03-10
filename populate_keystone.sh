@@ -26,9 +26,6 @@ then
 	func_set_value "DEFTENANTID" $DEFTENANTID
 fi
 
-TENANTID=$(func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "users")
-func_set_value "TENANTID" $TENANTID
-
 ##Check for the existance of an admin user(name, password and ID). If it doess not exist, create one.
 ##This user will belong to the default tenant.
 if [ ! -n "$ADMINUSERNAME" ] || [ ! -n "$ADMINUSERPASS" ] || [ ! -n "$ADMINUSERID" ]
@@ -44,11 +41,6 @@ then
 	func_set_value "ADMINUSERID" $ADMINUSERID
 fi
 
-USERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$TENANTID" "user" "user")
-func_set_value "USERID" $USERID
-func_set_value "USERNAME" "user"
-func_set_value "PASSWORD" "user"
-
 ##Check for the existance of an admin role. IF it does not exist, create one.
 if [ ! -n "$ADMINROLENAME" ] || [ ! -n "$ADMINROLEID" ]
 then
@@ -59,13 +51,8 @@ then
 	func_set_value "ADMINROLEID" $ADMINROLEID
 fi
 
-ROLEID=$(func_create_role "$ADMINTOKEN" "$KEYSTONEIP" "member")
-func_set_value "ROLEID" $ROLEID
-
 ##Add the admin user to the admin role. This command produces no output.
 func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$ADMINUSERID" "$DEFTENANTID" "$ADMINROLEID"
-
-func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERID" "$TENANTID" "$ROLEID"
 
 ##Create another tenant. This tenant will hold all the OpenStack services.
 func_echo "Creating tenant for OpenStack services"
@@ -139,4 +126,7 @@ func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "keystone" 	"identity" 	"Identit
 func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "ec2" 		"ec2" 		"EC2 Compatibility Service" 	"192.168.0.56"
 func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "quantum" 	"network" 	"Network Service" 		"192.168.0.55"
 
+echo "export OS_USERNAME=$ADMINUSERNAME" >> keystonerc
+echo "export OS_PASSWORD=$ADMINUSERPASS" >> keystonerc
+#echo "export SERVICE_TOKEN=$ADMINTOKEN" >> keystonerc
 
