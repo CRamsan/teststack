@@ -128,5 +128,6 @@ func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "quantum" 	"network" 	"Network S
 
 echo "export OS_USERNAME=$ADMINUSERNAME" >> keystonerc
 echo "export OS_PASSWORD=$ADMINUSERPASS" >> keystonerc
-#echo "export SERVICE_TOKEN=$ADMINTOKEN" >> keystonerc
+echo "export OS_TENANT_NAME=$DEFTENANTNAME" >> keystonerc
+echo "export SERVICE_TOKEN=$ADMINTOKEN" >> keystonerc
 
