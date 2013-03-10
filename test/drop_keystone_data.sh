@@ -1,6 +1,8 @@
 source functions.sh
 source localrc
 
+set -x
+
 keystone --token "$ADMINTOKEN"  --endpoint http://"$KEYSTONEIP":35357/v2.0 user-delete $USERID
 keystone --token "$ADMINTOKEN"  --endpoint http://"$KEYSTONEIP":35357/v2.0 user-delete $ADMINUSERID
 keystone --token "$ADMINTOKEN"  --endpoint http://"$KEYSTONEIP":35357/v2.0 role-delete $ROLEID

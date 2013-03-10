@@ -161,6 +161,7 @@ function func_user_role_add {
 }
 
 function func_create_service {
+	set -x
         ADMINTOKEN=$1
         KEYSTONEIP=$2
         SERVNAME=$3
@@ -201,7 +202,7 @@ function func_create_service {
         elif [ "$SERVTYPE" == "object-store" ]
 	then
                 ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
-                --region "RegionOne" \
+                 --region "RegionOne" \
                 --service_id "$SERVID" \
 		--publicurl "http://$SERVIP:8080/v1/AUTH_%(tenant_id)s" \
 		--adminurl "http://$SERVIP:8080/v1" \
@@ -232,7 +233,8 @@ function func_create_service {
 		--internalurl "http://$SERVIP:9696/v2" 	| sed 's/ //g'  | grep "|id|" | cut -d'|' -f3)
 	fi
 	func_set_value "$SERVNAME"ENDID "$ENDPOINTID"
-	echo $ENDPOINTID
+	func_echo "Service $SERVNAME added and configured"
+	set -x
 }
 
 

@@ -131,12 +131,12 @@ then
 	func_set_value "USERSWIFTID" $USERSWIFTID
 fi
 
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "nova" "compute" "Compute Service" "192.168.0.56"
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "cinder" "volume" "Volume Service" "192.168.0.52"
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "glance" "image" "Image Service" "192.168.0.51"
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "swift" "object-store" "Object Storage Service" "192.168.0.54"
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "keystone" "indentity" "Identity Service" "192.168.0.50"
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "ec2" "ec2" "EC2 Compatibility Service" "192.168.0.56"
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "quantum" "network" "Network Service" "192.168.0.55"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "nova" 		"compute" 	"Compute Service" 		"192.168.0.56"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "cinder" 	"volume" 	"Volume Service" 		"192.168.0.52"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "glance" 	"image" 	"Image Service" 		"192.168.0.51"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "swift" 	"object-store" 	"Object Storage Service" 	"192.168.0.54"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "keystone" 	"indentity" 	"Identity Service" 		"192.168.0.50"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "ec2" 		"ec2" 		"EC2 Compatibility Service" 	"192.168.0.56"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "quantum" 	"network" 	"Network Service" 		"192.168.0.55"
 
 
