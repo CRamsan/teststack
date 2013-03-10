@@ -18,45 +18,51 @@ fi
 ##Check for the existance of a default tenant's name and their ID.
 if [ ! -n "$DEFTENANTNAME" ] || [ ! -n "$DEFTENANTID" ]
 then
-        echo "What is going to be the name for the default tenant?:"
-        DEFTENANTNAME=$(func_ask_user)
+        #echo "What is going to be the name for the default tenant?:"
+        DEFTENANTNAME="admin"
         func_set_value "DEFTENANTNAME" $DEFTENANTNAME
-
-	#func_echo "func_create_tenant \"$ADMINTOKEN\" \"$KEYSTONEIP\" \"$DEFTENANTNAME\""
 
 	DEFTENANTID=$(func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTNAME" )
 	func_set_value "DEFTENANTID" $DEFTENANTID
 fi
 
+TENANTID=$(func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "users")
+
 ##Check for the existance of an admin user(name, password and ID). If it doess not exist, create one.
 ##This user will belong to the default tenant.
 if [ ! -n "$ADMINUSERNAME" ] || [ ! -n "$ADMINUSERPASS" ] || [ ! -n "$ADMINUSERID" ]
 then
-        echo "What is going to be the name for the admin user?:"
-        ADMINUSERNAME=$(func_ask_user)
+#        echo "What is going to be the name for the admin user?:"
+        ADMINUSERNAME="admin"
         func_set_value "ADMINUSERNAME" $ADMINUSERNAME
 
         func_set_password "ADMINUSERPASS" "Admin user's password"
         ADMINUSERPASS=$(func_retrieve_value "ADMINUSERPASS")
 
-	#func_echo "func_create_user \"$ADMINTOKEN\" \"$KEYSTONEIP\" \"$DEFTENANTID\"  \"$ADMINUSERNAME\" \"$ADMINUSERPASS\""
-
 	ADMINUSERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTID"  "$ADMINUSERNAME" "$ADMINUSERPASS")
 	func_set_value "ADMINUSERID" $ADMINUSERID
 fi
 
+USERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "users" "user" "user")
+func_set_value "USERNAME" "user"
+func_set_value "PASSWORD" "user"
+
 ##Check for the existance of an admin role. IF it does not exist, create one.
 if [ ! -n "$ADMINROLENAME" ] || [ ! -n "$ADMINROLEID" ]
 then
-        echo "What is going to be the name for the admin role?:"
-        ADMINROLENAME=$(func_ask_user)
+#        echo "What is going to be the name for the admin role?:"
+        ADMINROLENAME="admin"
         func_set_value "ADMINROLENAME" $ADMINROLENAME
 	ADMINROLEID=$(func_create_role "$ADMINTOKEN" "$KEYSTONEIP" "$ADMINROLENAME")
 	func_set_value "ADMINROLEID" $ADMINROLEID
 fi
 
+ROLEID=$(func_create_role "$ADMINTOKEN" "$KEYSTONEIP" "member")
+
 ##Add the admin user to the admin role. This command produces no output.
 func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$ADMINUSERID" "$DEFTENANTID" "$ADMINROLEID"
+
+func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$USERID" "$TENANTID" "$ROLEID"
 
 ##Create another tenant. This tenant will hold all the OpenStack services.
 func_echo "Creating tenant for OpenStack services"
