@@ -43,7 +43,7 @@ then
 	func_set_value "ADMINUSERID" $ADMINUSERID
 fi
 
-USERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "users" "user" "user")
+USERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$TENANTID" "user" "user")
 func_set_value "USERNAME" "user"
 func_set_value "PASSWORD" "user"
 
