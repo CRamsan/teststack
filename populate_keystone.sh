@@ -27,6 +27,7 @@ then
 fi
 
 TENANTID=$(func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "users")
+func_set_value "TENANTID" $TENANTID
 
 ##Check for the existance of an admin user(name, password and ID). If it doess not exist, create one.
 ##This user will belong to the default tenant.
@@ -44,6 +45,7 @@ then
 fi
 
 USERID=$(func_create_user "$ADMINTOKEN" "$KEYSTONEIP" "$TENANTID" "user" "user")
+func_set_value "USERID" $USERID
 func_set_value "USERNAME" "user"
 func_set_value "PASSWORD" "user"
 
@@ -58,6 +60,7 @@ then
 fi
 
 ROLEID=$(func_create_role "$ADMINTOKEN" "$KEYSTONEIP" "member")
+func_set_value "ROLEID" $ROLEID
 
 ##Add the admin user to the admin role. This command produces no output.
 func_user_role_add "$ADMINTOKEN" "$KEYSTONEIP" "$ADMINUSERID" "$DEFTENANTID" "$ADMINROLEID"

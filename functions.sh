@@ -50,6 +50,7 @@ function funct_add_cloud_archive {
 }
 
 function func_ask_user {
+	val=""
 	read -e val
 	echo $val
 }
@@ -166,11 +167,12 @@ function func_create_service {
         SERVTYPE=$4
         SERVDESC=$5
 	SERVIP=$6
+	ENDPOINTID=""
 	SERVID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 service-create \
 		--name="$SERVNAME" \
 		--type="$SERVTYPE"  \
 		--description="$SERVDESC" | sed  's/ //g'  | grep "|id|" | cut -d'|' -f3)
-
+	func_set_value "$SERVNAME"SERVID "$SERVID"
 	if [ "$SERVTYPE" == "compute" ]
 	then
 		ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
@@ -228,6 +230,7 @@ function func_create_service {
 		--adminurl "http://$SERVIP:9696/v2" \
 		--internalurl "http://$SERVIP:9696/v2" 	| sed 's/ //g'  | grep "|id|" | cut -d'|' -f3)
 	fi
+	func_set_value "$SERVNAME"ENDID "$ENDPOINTID"
 	echo $ENDPOINTID
 }
 
