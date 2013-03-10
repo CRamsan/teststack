@@ -168,6 +168,7 @@ function func_create_service {
         SERVDESC=$5
 	SERVIP=$6
 	ENDPOINTID=""
+	SERVID=""
 	SERVID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 service-create \
 		--name="$SERVNAME" \
 		--type="$SERVTYPE"  \
@@ -210,7 +211,7 @@ function func_create_service {
                 ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
                 --region "RegionOne" \
                 --service_id "$SERVID" \
-		--publicurl "http://$SERVIP0:5000/v2.0" \
+		--publicurl "http://$SERVIP:5000/v2.0" \
 		--adminurl "http://$SERVIP:35357/v2.0" \
 		--internalurl "http://$SERVIP:5000/v2.0" | sed 's/ //g'  | grep "|id|" | cut -d'|' -f3)
         elif [ "$SERVTYPE" == "ec2" ]

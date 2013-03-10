@@ -1,8 +1,0 @@
-source functions.sh
-source localrc
-
-keystone --token "$ADMINTOKEN"  --endpoint http://"$KEYSTONEIP":35357/v2.0 user-delete
-keystone --token "$ADMINTOKEN"  --endpoint http://"$KEYSTONEIP":35357/v2.0 role-delete
-keystone --token "$ADMINTOKEN"  --endpoint http://"$KEYSTONEIP":35357/v2.0 tenant-delete
-keystone --token "$ADMINTOKEN"  --endpoint http://"$KEYSTONEIP":35357/v2.0 service-delete
-keystone --token "$ADMINTOKEN"  --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-delete
