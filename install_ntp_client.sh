@@ -24,6 +24,6 @@ then
 	func_set_value "NTPIP" $NTPIP
 fi
 
-func_replace_param "/etc/ntp.conf" "server" "$NTPIP"
+func_replace "/etc/ntp.conf" "server 0.ubuntu.pool.ntp.org" "server $NTPIP"
 
 service ntp restart

@@ -53,14 +53,12 @@ then
 	ADMINTOKEN=$(func_retrieve_value "ADMINTOKEN")
 fi
 
+exit
 ##Configure Keystone to use mysql.
-func_replace_param "/etc/keystone/keystone.conf" "connection" "mysql://keystone:$KEYSTONEPASS@$KEYSTONEIP/keystone"
+func_replace "/etc/keystone/keystone.conf" "connection = sqlite:////var/lib/keystone/keystone.db" "connection = mysql://keystone:$KEYSTONEPASS@$KEYSTONEIP/keystone"
 
 ##And set the admin-token
-func_replace_param "/etc/keystone/keystone.conf" "admin_token" "$ADMINTOKEN"
-
-##Set the driver to sql
-func_replace_param "/etc/keystone/keystone.conf" "[catalog] driver" "keystone.catalog.backends.sql.Catalog"
+func_replace "/etc/keystone/keystone.conf" "# admin_token = ADMIN" "admin_token = $ADMINTOKEN"
 
 #Certs are not bundled so we will download them manually
 mkdir /etc/keystone/ssl

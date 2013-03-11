@@ -45,20 +45,22 @@ then
 	func_set_value "GLANCEEIP" $GLANCEIP
 fi
 
+exit
+
 ##Configure glance to use mysql and rabbit
-func_replace_param "/etc/glance/glance-api.conf" 	"connection" "mysql://glance:$GLANCEPASS@$GLANCEIP/glance"
-func_replace_param "/etc/glance/glance-registry.conf" 	"connection" "mysql://glance:$GLANCEPASS@$GLANCEIP/glance"
+func_replace "/etc/glance/glance-api.conf" 	"connection" "mysql://glance:$GLANCEPASS@$GLANCEIP/glance"
+func_replace "/etc/glance/glance-registry.conf" 	"connection" "mysql://glance:$GLANCEPASS@$GLANCEIP/glance"
 
-func_replace_param "/etc/glance/glance-api.conf" "admin_tenant_name" 	"service"
-func_replace_param "/etc/glance/glance-api.conf" "admin_user" 		"glance"
-func_replace_param "/etc/glance/glance-api.conf" "admin_password" 	"glance"
+func_replace "/etc/glance/glance-api.conf" "admin_tenant_name" 	"service"
+func_replace "/etc/glance/glance-api.conf" "admin_user" 		"glance"
+func_replace "/etc/glance/glance-api.conf" "admin_password" 	"glance"
 
-func_replace_param "/etc/glance/glance-registry.conf" "admin_tenant_name" 	"service"
-func_replace_param "/etc/glance/glance-registry.conf" "admin_user" 		"glance"
-func_replace_param "/etc/glance/glance-registry.conf" "admin_password" 		"glance"
+func_replace "/etc/glance/glance-registry.conf" "admin_tenant_name" 	"service"
+func_replace "/etc/glance/glance-registry.conf" "admin_user" 		"glance"
+func_replace "/etc/glance/glance-registry.conf" "admin_password" 		"glance"
 
-func_replace_param "/etc/glance/glance-api.conf" "notifier_strategy" 	"rabbit"
-func_replace_param "/etc/glance/glance-api.conf" "rabbit_password" 	"$RABBITPASS"
+func_replace "/etc/glance/glance-api.conf" "notifier_strategy" 	"rabbit"
+func_replace "/etc/glance/glance-api.conf" "rabbit_password" 	"$RABBITPASS"
 
 ##Next, restart the glance service so that it picks up the new database configuration.
 ##Lastly, initialize the new glance database.
