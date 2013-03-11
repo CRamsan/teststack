@@ -53,7 +53,6 @@ then
 	ADMINTOKEN=$(func_retrieve_value "ADMINTOKEN")
 fi
 
-exit
 ##Configure Keystone to use mysql.
 func_replace "/etc/keystone/keystone.conf" "connection = sqlite:////var/lib/keystone/keystone.db" "connection = mysql://keystone:$KEYSTONEPASS@$KEYSTONEIP/keystone"
 
@@ -66,6 +65,7 @@ wget http://ubuntu-cloud.archive.canonical.com/ubuntu/pool/main/k/keystone/keyst
 tar xzf keystone_2013.1.g3.orig.tar.gz
 mv keystone-2013.1.g3/examples/pki/* /etc/keystone/ssl/
 rm -r keystone-2013.1.g3
+rm -r keystone_2013.1.g3.orig.tar.gz
 
 ##Next, restart the keystone service so that it picks up the new database configuration.
 ##Lastly, initialize the new keystone database.
