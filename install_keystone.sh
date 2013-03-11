@@ -62,6 +62,13 @@ func_replace_param "/etc/keystone/keystone.conf" "admin_token" "$ADMINTOKEN"
 ##Set the driver to sql
 func_replace_param "/etc/keystone/keystone.conf" "[catalog] driver" "keystone.catalog.backends.sql.Catalog"
 
+#Certs are not bundled so we will download them manually
+mkdir /etc/keystone/ssl
+wget http://ubuntu-cloud.archive.canonical.com/ubuntu/pool/main/k/keystone/keystone_2013.1.g3.orig.tar.gz
+tar xzf keystone_2013.1.g3.orig.tar.gz
+mv keystone-2013.1.g3/examples/pki/* /etc/keystone/ssl/
+rm -r keystone-2013.1.g3
+
 ##Next, restart the keystone service so that it picks up the new database configuration.
 ##Lastly, initialize the new keystone database.
 service keystone restart
