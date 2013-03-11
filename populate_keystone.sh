@@ -118,13 +118,62 @@ then
 	func_set_value "USERSWIFTID" $USERSWIFTID
 fi
 
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "nova" 		"compute" 	"Compute Service" 		"192.168.0.56"
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "cinder" 	"volume" 	"Volume Service" 		"192.168.0.52"
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "glance" 	"image" 	"Image Service" 		"192.168.0.51"
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "swift" 	"object-store" 	"Object Storage Service" 	"192.168.0.54"
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "keystone" 	"identity" 	"Identity Service" 		"192.168.0.50"
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "ec2" 		"ec2" 		"EC2 Compatibility Service" 	"192.168.0.56"
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "quantum" 	"network" 	"Network Service" 		"192.168.0.55"
+if [ ! -n "$NOVAIP" ]
+then
+        echo "What is the IP of the NOva service?:"
+        ADMINUSERNAME=$(func_ask_user)
+        func_set_value "NOVAIP" $NOVAIP
+fi
+
+if [ ! -n "$CINDERIP" ]
+then
+        echo "What is the IP of the Cinder service?:"
+        ADMINUSERNAME=$(func_ask_user)
+        func_set_value "CINDERIP" $CINDERIP
+fi
+
+if [ ! -n "$GLANCEIP" ]
+then
+        echo "What is the IP of the Glance service?:"
+        ADMINUSERNAME=$(func_ask_user)
+        func_set_value "GLANCEIP" $GLANCEIP
+fi
+
+if [ ! -n "$SWIFTIP" ]
+then
+        echo "What is the IP of the Swift service?:"
+        ADMINUSERNAME=$(func_ask_user)
+        func_set_value "SWIFTIP" $SWIFTIP
+fi
+
+if [ ! -n "$KEYSTONEIP" ]
+then
+        echo "What is the IP of the Keystone service?:"
+        ADMINUSERNAME=$(func_ask_user)
+        func_set_value "KEYSTONEIP" $KEYSTONEIP
+fi
+
+if [ ! -n "$EC2IP" ]
+then
+        echo "What is the IP of the EC2 service?:"
+        ADMINUSERNAME=$(func_ask_user)
+        func_set_value "EC2IP" $EC2IP
+fi
+
+if [ ! -n "$QUANTUMIP" ]
+then
+        echo "What is the IP of the Quantum service?:"
+        ADMINUSERNAME=$(func_ask_user)
+        func_set_value "QUANTUMIP" $QUANTUMIP
+fi
+
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "nova" 		"compute" 	"Compute Service" 		"$NOVAIP"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "cinder" 	"volume" 	"Volume Service" 		"$CINDERIP"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "glance" 	"image" 	"Image Service" 		"$GLANCEIP"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "swift" 	"object-store" 	"Object Storage Service" 	"$SWIFTIP"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "keystone" 	"identity" 	"Identity Service" 		"$KEYSTONEIP"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "ec2" 		"ec2" 		"EC2 Compatibility Service" 	"$EC2IP"
+func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "quantum" 	"network" 	"Network Service" 		"$QUANTUMIP"
 
 echo "export OS_USERNAME=$ADMINUSERNAME" >> keystonerc
 echo "export OS_PASSWORD=$ADMINUSERPASS" >> keystonerc
