@@ -121,49 +121,49 @@ fi
 if [ ! -n "$NOVAIP" ]
 then
         echo "What is the IP of the NOva service?:"
-        ADMINUSERNAME=$(func_ask_user)
+        NOVAIP=$(func_ask_user)
         func_set_value "NOVAIP" $NOVAIP
 fi
 
 if [ ! -n "$CINDERIP" ]
 then
         echo "What is the IP of the Cinder service?:"
-        ADMINUSERNAME=$(func_ask_user)
+        CINDERIP=$(func_ask_user)
         func_set_value "CINDERIP" $CINDERIP
 fi
 
 if [ ! -n "$GLANCEIP" ]
 then
         echo "What is the IP of the Glance service?:"
-        ADMINUSERNAME=$(func_ask_user)
+        GLANCEIP=$(func_ask_user)
         func_set_value "GLANCEIP" $GLANCEIP
 fi
 
 if [ ! -n "$SWIFTIP" ]
 then
         echo "What is the IP of the Swift service?:"
-        ADMINUSERNAME=$(func_ask_user)
+        SWIFTIP=$(func_ask_user)
         func_set_value "SWIFTIP" $SWIFTIP
 fi
 
 if [ ! -n "$KEYSTONEIP" ]
 then
         echo "What is the IP of the Keystone service?:"
-        ADMINUSERNAME=$(func_ask_user)
+        KEYSTONEIP=$(func_ask_user)
         func_set_value "KEYSTONEIP" $KEYSTONEIP
 fi
 
 if [ ! -n "$EC2IP" ]
 then
         echo "What is the IP of the EC2 service?:"
-        ADMINUSERNAME=$(func_ask_user)
+        EC2=$(func_ask_user)
         func_set_value "EC2IP" $EC2IP
 fi
 
 if [ ! -n "$QUANTUMIP" ]
 then
         echo "What is the IP of the Quantum service?:"
-        ADMINUSERNAME=$(func_ask_user)
+        QUANTUMIP=$(func_ask_user)
         func_set_value "QUANTUMIP" $QUANTUMIP
 fi
 
