@@ -38,11 +38,11 @@ GRANT ALL ON glance.* TO 'glance'@'localhost' IDENTIFIED BY "$GLANCEPASS";
 EOF
 
 ##Check the ip of the glance service.
-if [ ! -n "$GLANCEEIP" ]
+if [ ! -n "$GLANCEIP" ]
 then
 	echo "On which host has Glance been installed? Please use the IP and not the hostname"
 	GLANCEIP=$(func_ask_user)
-	func_set_value "GLANCEEIP" $GLANCEIP
+	func_set_value "GLANCEIP" $GLANCEIP
 fi
 
 ##Configure glance to use mysql

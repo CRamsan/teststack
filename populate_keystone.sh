@@ -156,7 +156,7 @@ fi
 if [ ! -n "$EC2IP" ]
 then
         echo "What is the IP of the EC2 service?:"
-        EC2=$(func_ask_user)
+        EC2IP=$(func_ask_user)
         func_set_value "EC2IP" $EC2IP
 fi
 
