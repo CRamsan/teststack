@@ -115,6 +115,18 @@ function func_replace_param {
 	echo
 }
 
+function func_replace {
+	file=$1
+	oldline=$2
+	newline=$3
+	func_echo "In file $file - \"$oldline\" is been replaced with \"$newline\""
+	set -x
+	newlinefixed=$(echo $newline | sed -e 's/[]\/()$*.^|[]/\\&/g')
+	oldlinefixed=$(echo $oldline | sed -e 's/[]\/()$*.^|[]/\\&/g')
+	sed -i "s/$oldlinefixed/$newlinefixed/g" $file
+	set +x
+}
+
 function func_create_tenant {
 	ADMINTOKEN=$1
 	KEYSTONEIP=$2
