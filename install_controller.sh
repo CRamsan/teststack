@@ -1,0 +1,9 @@
+#!/bin/bash
+./install_base.sh
+./install_mysql.sh
+./install_ntp_server.sh
+./install_rabbit.sh
+./install_keystone.sh
+./populate_keystone.sh
+./install_glance.sh
+./populate_glance.sh
