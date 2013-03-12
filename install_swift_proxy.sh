@@ -15,7 +15,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-func_install swift-proxy memcached python-swiftclient
+func_install swift-proxy memcached python-swiftclient python-keystone-auth-token
 echo "What is the local IP"
 NODEIP=$(func_ask_user)
 func_set_value "NODEIP" $NODEIP
@@ -33,7 +33,7 @@ echo "bind_port = 8888" 			>> /etc/swift/proxy-server.conf
 echo "user = demo" 				>> /etc/swift/proxy-server.conf
 echo "" 					>> /etc/swift/proxy-server.conf
 echo "[pipeline:main]" 				>> /etc/swift/proxy-server.conf
-echo "pipeline = healthcheck cache authtoken keystone proxy-server" >> /etc/swift/proxy-server.conf
+echo "pipeline = healthcheck cache authtoken swift3 keystone proxy-server" >> /etc/swift/proxy-server.conf
 echo "" 					>> /etc/swift/proxy-server.conf
 echo "[app:proxy-server]" 			>> /etc/swift/proxy-server.conf
 echo "use = egg:swift#proxy" 			>> /etc/swift/proxy-server.conf
