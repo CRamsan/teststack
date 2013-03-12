@@ -28,40 +28,39 @@ mount /srv/node/sdb1
 chown -R swift:swift /srv/node
 
 
-printf "%s" "uid = swift\n\
-gid = swift\n\
-log file = /var/log/rsyncd.log\n\
-pid file = /var/run/rsyncd.pid\n\
-address = $NODEIP\n\
-\n\
-[account]\n\
-max connections = 2\n\
-path = /srv/node/\n\
-read only = false\n\
-lock file = /var/lock/account.lock\n\
-\n\
-[container]\n\
-max connections = 2\n\
-path = /srv/node/\n\
-read only = false\n\
-lock file = /var/lock/container.lock\n\
-\n\
-[object]\n\
-max connections = 2\n\
-path = /srv/node/\n\
-read only = false\n\
-lock file = /var/lock/object.lock >> /etc/rsyncd.conf
+echo "uid = swift" 			> /etc/rsyncd.conf
+echo "gid = swift" 			>> /etc/rsyncd.conf
+echo "log file = /var/log/rsyncd.log" 	>> /etc/rsyncd.conf
+echo "pid file = /var/run/rsyncd.pid" 	>> /etc/rsyncd.conf
+echo "address = $NODEIP" 		>> /etc/rsyncd.conf
+echo "" 				>> /etc/rsyncd.conf
+echo "[account]"			>> /etc/rsyncd.conf
+echo "max connections = 2" 		>> /etc/rsyncd.conf
+echo "path = /srv/node/" 		>> /etc/rsyncd.conf
+echo "read only = false" 		>> /etc/rsyncd.conf
+echo "lock file = /var/lock/account.lock" >> /etc/rsyncd.conf
+echo "" 				>> /etc/rsyncd.conf
+echo "[container]" 			>> /etc/rsyncd.conf
+echo "max connections = 2" 		>> /etc/rsyncd.conf
+echo "path = /srv/node/" 		>> /etc/rsyncd.conf
+echo "read only = false" 		>> /etc/rsyncd.conf
+echo "lock file = /var/lock/container.lock" >> /etc/rsyncd.conf
+echo "" 				>> /etc/rsyncd.conf
+echo "[object]" 			>> /etc/rsyncd.conf
+echo "max connections = 2" 		>> /etc/rsyncd.conf
+echo "path = /srv/node/" 		>> /etc/rsyncd.conf
+echo "read only = false" 		>> /etc/rsyncd.conf
+echo "lock file = /var/lock/object.lock" >> /etc/rsyncd.conf
 
 func_replace "/etc/default/rsync" "RSYNC_ENABLE=false" "RSYNC_ENABLE = true"
 
 service rsync start
 
+func_replace "/etc/swift/account-server.conf" 	"bind_ip = 0.0.0.0" "bind_ip = $NODEIP"
 
+func_replace "/etc/swift/container-server.conf"	"bind_ip = 0.0.0.0" "bind_ip = $NODEIP"
 
-
-
-
-
+func_replace "/etc/swift/object-server.conf"	"bind_ip = 0.0.0.0" "bind_ip = $NODEIP"
 
 swift-init object-server start
 swift-init object-replicator start
