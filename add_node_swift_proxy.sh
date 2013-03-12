@@ -19,6 +19,8 @@ echo "Give the IP of a storage node"
 NODEIP=$(func_ask_user)
 func_set_value "NODEIP" $NODEIP
 
+cd /etc/swift
+
 swift-ring-builder account.builder add z1-$NODEIP:6002/sdb1 100
 swift-ring-builder container.builder add z1-$NODEIP:6001/sdb1 100
 swift-ring-builder object.builder add z1-$NODEIP:6000/sdb1 100
