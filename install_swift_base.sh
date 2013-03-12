@@ -20,3 +20,14 @@ func_install swift rsync memcached python-netifaces python-xattr python-memcache
 mkdir -p /etc/swift
 chown -R swift:swift /etc/swift/
 
+if [ ! -n "$SWIFTHASH" ]
+then
+        func_set_password "SWIFTHASH" "Swift Hash"
+        SWIFTHASH=$(func_retrieve_value "SWIFTHASH")
+fi
+
+echo "[swift-hash]" > /etc/swift/swift.conf
+echo "# random unique string that can never change (DO NOT LOSE)" > /etc/swift/swift.conf
+echo "swift_hash_path_suffix = $SWIFTHASH" > /etc/swift/swift.conf
+
+
