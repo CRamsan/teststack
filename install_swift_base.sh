@@ -27,7 +27,7 @@ then
 fi
 
 echo "[swift-hash]" > /etc/swift/swift.conf
-echo "# random unique string that can never change (DO NOT LOSE)" > /etc/swift/swift.conf
-echo "swift_hash_path_suffix = $SWIFTHASH" > /etc/swift/swift.conf
+echo "# random unique string that can never change (DO NOT LOSE)" >> /etc/swift/swift.conf
+echo "swift_hash_path_suffix = $SWIFTHASH" >> /etc/swift/swift.conf
 
 
