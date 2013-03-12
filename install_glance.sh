@@ -46,8 +46,8 @@ then
 fi
 
 ##Configure glance to use mysql
-func_replace "/etc/glance/glance-api.conf" 	"sql_connection = sqlite:////var/lib/glance/glance.sqlite" "sql_mysql://glance:$GLANCEPASS@$GLANCEIP/glance"
-func_replace "/etc/glance/glance-registry.conf" "sql_connection = sqlite:////var/lib/glance/glance.sqlite" "sql_mysql://glance:$GLANCEPASS@$GLANCEIP/glance"
+func_replace "/etc/glance/glance-api.conf" 	"sql_connection = sqlite:////var/lib/glance/glance.sqlite" "sql_connection = mysql://glance:$GLANCEPASS@$GLANCEIP/glance"
+func_replace "/etc/glance/glance-registry.conf" "sql_connection = sqlite:////var/lib/glance/glance.sqlite" "sql_connection = mysql://glance:$GLANCEPASS@$GLANCEIP/glance"
 
 ##Set up the correct credentials
 func_replace "/etc/glance/glance-api.conf" "auth_host = 127.0.0.1" 			"auth_host = $KEYSTONEIP"
