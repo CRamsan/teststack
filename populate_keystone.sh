@@ -175,8 +175,6 @@ func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "keystone" 	"identity" 	"Identit
 func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "ec2" 		"ec2" 		"EC2 Compatibility Service" 	"$EC2IP"
 func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "quantum" 	"network" 	"Network Service" 		"$QUANTUMIP"
 
-echo "export OS_USERNAME=$ADMINUSERNAME" > keystonerc
+echo "export OS_USERNAME=$ADMINUSERNAME" >> keystonerc
 echo "export OS_PASSWORD=$ADMINUSERPASS" >> keystonerc
 echo "export OS_TENANT_NAME=$DEFTENANTNAME" >> keystonerc
-echo "export SERVICE_TOKEN=$ADMINTOKEN" >> keystonerc
-

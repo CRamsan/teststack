@@ -72,6 +72,7 @@ rm -r keystone_2013.1.g3.orig.tar.gz
 service keystone restart
 keystone-manage db_sync
 
-echo "export OS_AUTH_URL=\"http://$KEYSTONEIP:5000/v2.0/\" " >> keystonerc
+echo "export OS_AUTH_URL=\"http://$KEYSTONEIP:5000/v2.0/\" " > keystonerc
 echo "export SERVICE_ENDPOINT=\"http://$KEYSTONEIP:35357/v2.0\" " >> keystonerc
 echo "export SERVICE_TOKEN=$ADMINTOKEN" >> keystonerc
+
