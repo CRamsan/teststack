@@ -16,14 +16,14 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 ##Check for the existance of a default tenant's name and their ID.
-if [ ! -n "$DEFTENANTNAME" ] || [ ! -n "$DEFTENANTID" ]
+if [ ! -n "$DEFTENANTNAME" ] 
 then
-        #echo "What is going to be the name for the default tenant?:"
         DEFTENANTNAME="admin"
         func_set_value "DEFTENANTNAME" $DEFTENANTNAME
 
 	DEFTENANTID=$(func_create_tenant "$ADMINTOKEN" "$KEYSTONEIP" "$DEFTENANTNAME" )
 	func_set_value "DEFTENANTID" $DEFTENANTID
+
 fi
 
 ##Check for the existance of an admin user(name, password and ID). If it doess not exist, create one.
@@ -175,7 +175,7 @@ func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "keystone" 	"identity" 	"Identit
 func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "ec2" 		"ec2" 		"EC2 Compatibility Service" 	"$EC2IP"
 func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "quantum" 	"network" 	"Network Service" 		"$QUANTUMIP"
 
-echo "export OS_USERNAME=$ADMINUSERNAME" >> keystonerc
+echo "export OS_USERNAME=$ADMINUSERNAME" > keystonerc
 echo "export OS_PASSWORD=$ADMINUSERPASS" >> keystonerc
 echo "export OS_TENANT_NAME=$DEFTENANTNAME" >> keystonerc
 echo "export SERVICE_TOKEN=$ADMINTOKEN" >> keystonerc
