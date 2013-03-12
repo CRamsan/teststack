@@ -15,7 +15,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-func_install swift-proxy memcached python-swiftclient
+func_install swift-proxy memcached
 echo "What is the local IP"
 NODEIP=$(func_ask_user)
 func_set_value "NODEIP" $NODEIP
@@ -30,7 +30,7 @@ service memcached restart
 
 echo "[DEFAULT]" 				> /etc/swift/proxy-server.conf
 echo "bind_port = 8888" 			>> /etc/swift/proxy-server.conf
-echo "user = demo" 				>> /etc/swift/proxy-server.conf
+echo "user = swift" 				>> /etc/swift/proxy-server.conf
 echo "" 					>> /etc/swift/proxy-server.conf
 echo "[pipeline:main]" 				>> /etc/swift/proxy-server.conf
 echo "pipeline = healthcheck cache authtoken keystone proxy-server" >> /etc/swift/proxy-server.conf
@@ -55,8 +55,8 @@ echo "auth_port = 35357" 			>> /etc/swift/proxy-server.conf
 echo "auth_host = $KEYSTONEIP" 			>> /etc/swift/proxy-server.conf
 echo "auth_protocol = http" 			>> /etc/swift/proxy-server.conf
 echo "auth_uri = http://$KEYSTONEIP:5000/" 	>> /etc/swift/proxy-server.conf
-echo "auth_token = $SERVICETOKEN" 		>> /etc/swift/proxy-server.conf
-echo "admin_token = 012345SECRET99TOKEN012345" 	>> /etc/swift/proxy-server.conf
+echo "auth_token = $ADMINTOKEN" 		>> /etc/swift/proxy-server.conf
+echo "admin_token = $ADMINTOKEN" 		>> /etc/swift/proxy-server.conf
 echo "admin_tenant_name = service" 		>> /etc/swift/proxy-server.conf
 echo "admin_user = swift" 			>> /etc/swift/proxy-server.conf
 echo "admin_password = swift" 			>> /etc/swift/proxy-server.conf
