@@ -215,9 +215,9 @@ function func_create_service {
                 ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
                  --region "RegionOne" \
                 --service_id "$SERVID" \
-		--publicurl "http://$SERVIP:8080/v1/AUTH_%(tenant_id)s" \
-		--adminurl "http://$SERVIP:8080/v1" \
-		--internalurl "http://$SERVIP:8080/v1/AUTH_%(tenant_id)s" | sed 's/ //g'  | grep "|id|" | cut -d'|' -f3)
+		--publicurl "http://$SERVIP:8888/v1/AUTH_%(tenant_id)s" \
+		--adminurl "http://$SERVIP:8888/v1" \
+		--internalurl "http://$SERVIP:8888/v1/AUTH_%(tenant_id)s" | sed 's/ //g'  | grep "|id|" | cut -d'|' -f3)
         elif [ "$SERVTYPE" == "identity" ]
 	then
                 ENDPOINTID=$(keystone --token "$ADMINTOKEN" --endpoint http://"$KEYSTONEIP":35357/v2.0 endpoint-create \
