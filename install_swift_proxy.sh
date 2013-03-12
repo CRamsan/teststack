@@ -15,7 +15,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-func_install swift-proxy memcached
+func_install swift-proxy memcached python-swiftclient
 echo "What is the local IP"
 NODEIP=$(func_ask_user)
 func_set_value "NODEIP" $NODEIP
