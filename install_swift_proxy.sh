@@ -15,7 +15,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-func_install swift-proxy memcached python-swiftclient
+func_install swift-proxy memcached python-swiftclient python-keystone python-keystoneclient
 echo "What is the local IP"
 NODEIP=$(func_ask_user)
 func_set_value "NODEIP" $NODEIP
@@ -41,7 +41,7 @@ echo "allow_account_management = true" 		>> /etc/swift/proxy-server.conf
 echo "account_autocreate = true" 		>> /etc/swift/proxy-server.conf
 echo "" 					>> /etc/swift/proxy-server.conf
 echo "[filter:keystone]" 			>> /etc/swift/proxy-server.conf
-echo "paste.filter_factory = keystone.middleware.swift_auth:filter_factory" >> /etc/swift/proxy-server.conf
+echo "paste.filter_factory = keystone.middleware.auth_token:filter_factory" >> /etc/swift/proxy-server.conf
 echo "operator_roles = Member,admin, swiftoperator" >> /etc/swift/proxy-server.conf
 echo "" 					>> /etc/swift/proxy-server.conf
 echo "[filter:authtoken]" 			>> /etc/swift/proxy-server.conf
