@@ -1,1 +1,1 @@
-../functions.sh
+../common/functions.sh
