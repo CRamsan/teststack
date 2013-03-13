@@ -1,4 +1,4 @@
-#!/bin/bash
+\#!/bin/bash
 #This script is based on the tutorial that can be found at:
 #http://docs.openstack.org/trunk/openstack-compute/install/apt/content/
 
@@ -17,66 +17,41 @@ fi
 
 ###################################################################################
 
-##Install the identity service, Keystone!
+##Install the identity service, Quantum!
 ##Install the package
 func_install quantum-server
 
-exit
-
-
-#Delete the keystone.db file created in the /var/lib/keystone directory.
-rm /var/lib/keystone/keystone.db
-
-##Check if keystone password exists,
+##Check if quantum password exists,
 ##if it does not, ask the user for one.
-if [ ! -n "$KEYSTONEPASS" ]
+if [ ! -n "$QUANTUMPASS" ]
 then
-	func_set_password "KEYSTONEPASS" "Keystone user"
-	KEYSTONEPASS=$(func_retrieve_value "KEYSTONEPASS")
+	func_set_password "QUANTUMPASS" "Quantum user"
+	QUANTUMPASS=$(func_retrieve_value "QUANTUMPASS")
 fi
 
-##Give Keystone access to the database.
+##Give Quantum access to the database.
 mysql -u root -p"$MYSQLPASS" <<EOF
-CREATE DATABASE keystone;
-GRANT ALL ON keystone.* TO 'keystone'@'%' IDENTIFIED BY "$KEYSTONEPASS";
-GRANT ALL ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY "$KEYSTONEPASS";
+CREATE DATABASE quantum;
+GRANT ALL ON quantum.* TO 'quantum'@'%' IDENTIFIED BY "$QUANTUMPASS";
+GRANT ALL ON quantum.* TO 'quantum'@'localhost' IDENTIFIED BY "$QUANTUMPASS";
 EOF
 
-##Check the ip of the keystone service.
-if [ ! -n "$KEYSTONEIP" ]
+##Check the ip of the quantum service.
+if [ ! -n "$QUANTUMIP" ]
 then
-	echo "On which host has Keystone been installed? Please use the IP and not the hostname"
-	KEYSTONEIP=$(func_ask_user)
-	func_set_value "KEYSTONEIP" $KEYSTONEIP
+	echo "On which host has Quantum been installed? Please use the IP and not the hostname"
+	QUANTUMIP=$(func_ask_user)
+	func_set_value "QUANTUMIP" $QUANTUMIP
 fi
 
-##Check for the existance of an AdminToken.
-if [ ! -n "$ADMINTOKEN" ]
-then
-	func_set_password "ADMINTOKEN" "Admin token"
-	ADMINTOKEN=$(func_retrieve_value "ADMINTOKEN")
-fi
+##Configure Quantum to use mysql.
+func_replace "/etc/quantum/quantum.conf" "# fake_rabbit = False" 	"fake_rabbit = False"
+func_replace "/etc/quantum/quantum.conf" "# rabbit_host = localhost" 	"rabbit_host = $RABBITIP"
+func_replace "/etc/quantum/quantum.conf" "# rabbit_password = guest"	"rabbit_password = $RABBITPASS"
 
-##Configure Keystone to use mysql.
-func_replace "/etc/keystone/keystone.conf" "connection = sqlite:////var/lib/keystone/keystone.db" "connection = mysql://keystone:$KEYSTONEPASS@$KEYSTONEIP/keystone"
+func_replace "/etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini" "sql_connection = sqlite:////var/lib/quantum/ovs.sqlite" "sql_connection = mysql://quantum:$QUANTUMPASS@$QUANTUMIP/quantum"
+func_replace "/etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini" "# Example: tenant_network_type = gre"			"tenant_network_type = gre"
+func_replace "/etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini" "# Default: enable_tunneling = False"			"enable_tunneling = True"
+func_replace "/etc/quantum/plugins/openvswitch/ovs_quantum_plugin.ini" "# Example: tunnel_id_ranges = 1:1000"			"tunnel_id_ranges = 1:1000"
 
-##And set the admin-token
-func_replace "/etc/keystone/keystone.conf" "# admin_token = ADMIN" "admin_token = $ADMINTOKEN"
-
-#Certs are not bundled so we will download them manually
-mkdir /etc/keystone/ssl
-wget http://ubuntu-cloud.archive.canonical.com/ubuntu/pool/main/k/keystone/keystone_2013.1.g3.orig.tar.gz
-tar xzf keystone_2013.1.g3.orig.tar.gz
-mv keystone-2013.1.g3/examples/pki/* /etc/keystone/ssl/
-rm -r keystone-2013.1.g3
-rm -r keystone_2013.1.g3.orig.tar.gz
-
-##Next, restart the keystone service so that it picks up the new database configuration.
-##Lastly, initialize the new keystone database.
-service keystone restart
-keystone-manage db_sync
-
-echo "export OS_AUTH_URL=\"http://$KEYSTONEIP:5000/v2.0/\" " > keystonerc
-echo "export SERVICE_ENDPOINT=\"http://$KEYSTONEIP:35357/v2.0\" " >> keystonerc
-echo "export SERVICE_TOKEN=$ADMINTOKEN" >> keystonerc
-
+service quantum-server restart
