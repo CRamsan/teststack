@@ -55,9 +55,10 @@ echo "rabbit_userid = guest" >> /etc/cinder/cinder.conf
 echo "rabbit_password = $RABBITPASS" >> /etc/cinder/cinder.conf
 echo "rabbit_virtual_host = /" >> /etc/cinder/cinder.conf
 
-func_replace "/etc/lvm/lvm.conf" "filter = [ \"a/.*/\" ]" "filter = [ \"a/sdb1/\", \"r/.*/\"]"
+func_replace "/etc/lvm/lvm.conf" "filter = [ \"a/.*/\" ]" 	"filter = [  \"a/loop/\", \"a/sdb1/\", \"r/.*/\"]"
 
-sh -c "echo 'include $volumes_dir/*' >> /etc/tgt/conf.d/cinder.conf"
+echo "state_path = /var/lib/cinder " >> /etc/tgt/conf.d/cinder.conf
+echo "volumes_dir = /var/lib/cinder/volumes " >> /etc/tgt/conf.d/cinder.conf
 
 sudo restart tgt
 
