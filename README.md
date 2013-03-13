@@ -6,14 +6,14 @@ Teststack is a collection of bash scripts based on devstack and some OpenStack t
 Currently this script requires Ubuntu 12.04+
 
 What is working(for the most part):
-	Keystone
-	Glance
-	Cinder
-	Swift
+ * Keystone
+ * Glance
+ * Cinder
+ * Swift
 
 Currently working on:
-	Nova
-	Quantum
-	Horizon
+ * Nova
+ * Quantum
+ * Horizon
 
 Other services such as Heat and Ceilometer are not a high priority
