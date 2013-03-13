@@ -28,10 +28,10 @@ then
 fi
 
 ##Give Keystone access to the database.
-mysql -u root -p"$CINDERPASS" <<EOF
+mysql -u root -p"$MYSQLPASS" <<EOF
 CREATE DATABASE cinder;
-GRANT ALL ON keystone.* TO 'cinder'@'%' IDENTIFIED BY "$CINDERPASS";
-GRANT ALL ON keystone.* TO 'cinder'@'localhost' IDENTIFIED BY "$CINDERPASS";
+GRANT ALL ON cinder.* TO 'cinder'@'%' IDENTIFIED BY "$CINDERPASS";
+GRANT ALL ON cinder.* TO 'cinder'@'localhost' IDENTIFIED BY "$CINDERPASS";
 EOF
 
 ##Check the ip of the keystone service.
@@ -48,20 +48,18 @@ func_replace "/etc/cinder/api-paste.ini" "admin_tenant_name = %SERVICE_TENANT_NA
 func_replace "/etc/cinder/api-paste.ini" "admin_user = %SERVICE_USER%"			"admin_user = cinder"
 func_replace "/etc/cinder/api-paste.ini" "admin_password = %SERVICE_PASSWORD%"		"admin_password = cinder"
 
-echo "sql_connection = mysql://cinder:$CINDERPASS@$CINDERIP/cinder" >> /etc/cinder/cinder.conf
-echo "rabbit_host = $KEYSTONEIP"
-echo "rabbit_port = 5672"
-echo "rabbit_userid = guest"
-echo "rabbit_password = $RABBITPASS"
-echo "rabbit_virtual_host = /"
+#echo "sql_connection = mysql://cinder:$CINDERPASS@$CINDERIP/cinder" >> /etc/cinder/cinder.conf
+#echo "rabbit_host = $KEYSTONEIP"  >> /etc/cinder/cinder.conf
+#echo "rabbit_port = 5672" >> /etc/cinder/cinder.conf
+#echo "rabbit_userid = guest" >> /etc/cinder/cinder.conf
+#echo "rabbit_password = $RABBITPASS" >> /etc/cinder/cinder.conf
+#echo "rabbit_virtual_host = /" >> /etc/cinder/cinder.conf
 
 func_replace "/etc/lvm/lvm.conf" "filter = [ \"a/.*/\" ]" "filter = [ \"a/sdb1/\", \"r/.*/\"]"
 
 sh -c "echo 'include $volumes_dir/*' >> /etc/tgt/conf.d/cinder.conf"
 
 sudo restart tgt
-
-exit
 
 cinder-manage db sync
 
