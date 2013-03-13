@@ -75,5 +75,5 @@ service cinder-volume restart
 service cinder-api restart
 service cinder-scheduler restart
 
-cinder create --display_name test 1
-cinder list
+#cinder create --display_name test 1
+#cinder list
