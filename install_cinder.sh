@@ -48,12 +48,12 @@ func_replace "/etc/cinder/api-paste.ini" "admin_tenant_name = %SERVICE_TENANT_NA
 func_replace "/etc/cinder/api-paste.ini" "admin_user = %SERVICE_USER%"			"admin_user = cinder"
 func_replace "/etc/cinder/api-paste.ini" "admin_password = %SERVICE_PASSWORD%"		"admin_password = cinder"
 
-#echo "sql_connection = mysql://cinder:$CINDERPASS@$CINDERIP/cinder" >> /etc/cinder/cinder.conf
-#echo "rabbit_host = $KEYSTONEIP"  >> /etc/cinder/cinder.conf
-#echo "rabbit_port = 5672" >> /etc/cinder/cinder.conf
-#echo "rabbit_userid = guest" >> /etc/cinder/cinder.conf
-#echo "rabbit_password = $RABBITPASS" >> /etc/cinder/cinder.conf
-#echo "rabbit_virtual_host = /" >> /etc/cinder/cinder.conf
+echo "sql_connection = mysql://cinder:$CINDERPASS@$CINDERIP/cinder" >> /etc/cinder/cinder.conf
+echo "rabbit_host = $KEYSTONEIP"  >> /etc/cinder/cinder.conf
+echo "rabbit_port = 5672" >> /etc/cinder/cinder.conf
+echo "rabbit_userid = guest" >> /etc/cinder/cinder.conf
+echo "rabbit_password = $RABBITPASS" >> /etc/cinder/cinder.conf
+echo "rabbit_virtual_host = /" >> /etc/cinder/cinder.conf
 
 func_replace "/etc/lvm/lvm.conf" "filter = [ \"a/.*/\" ]" "filter = [ \"a/sdb1/\", \"r/.*/\"]"
 
