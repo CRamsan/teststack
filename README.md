@@ -21,4 +21,5 @@ Other services such as Heat and Ceilometer are not a high priority
 How to use it
 ============
 
-Before all the scripts were located in the main directory, but they are each located on a separate directory based on their fucntion. If you want to run a set of scripts you may want to move them or copy them to a given location(remember most scripts require the `functions.sh` script located in common/).
+Before all the scripts were located in the main directory, but they are each located on a separate directory based on their fucntion. If you want to run a set of scripts you may want to move them or copy them to a given location(remember most scripts require the `functions.sh` script located in common/ directory).
+Having all the files on separate directories and then having to move/copy them may seem like more work but at the end it will force the users(and me) to keep and organized workspace and to plan and organize their requierements before running any script.
