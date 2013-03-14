@@ -55,7 +55,21 @@ echo "rabbit_userid = guest" >> /etc/cinder/cinder.conf
 echo "rabbit_password = $RABBITPASS" >> /etc/cinder/cinder.conf
 echo "rabbit_virtual_host = /" >> /etc/cinder/cinder.conf
 
-func_replace "/etc/lvm/lvm.conf" "filter = [ \"a/.*/\" ]" 	"filter = [  \"a/loop/\", \"a/sdb1/\", \"r/.*/\"]"
+if [ ! -n "$CINDEDEV" ]
+then
+        func_echo "On which device will Cinder store the data? Please choose one on the form [sda2, sda3, sdb1, loop2, etc...]"
+        func_echo "More devices can be configured later"
+        CINDERDEV=$(func_ask_user)
+        func_set_value "CINDERDEV" $CINDERDEV
+fi
+
+if [[ $CINDERDEV == loop* ]]
+then
+	func_replace "/etc/lvm/lvm.conf" "filter = [ \"a/.*/\" ]" 	"filter = [  \"a/loop/\", \"r/.*/\"]"
+else
+	func_replace "/etc/lvm/lvm.conf" "filter = [ \"a/.*/\" ]" 	"filter = [  \"a/$CINDERDEV/\", \"r/.*/\"]"
+fi
+
 
 echo "state_path = /var/lib/cinder " >> /etc/tgt/conf.d/cinder.conf
 echo "volumes_dir = /var/lib/cinder/volumes " >> /etc/tgt/conf.d/cinder.conf
@@ -64,17 +78,7 @@ sudo restart tgt
 
 cinder-manage db sync
 
-dd if=/dev/zero of=cinder-volumes bs=1 count=0 seek=2G
-
-losetup /dev/loop2 cinder-volumes
-
-pvcreate /dev/loop2
-vgcreate cinder-volumes /dev/loop2
-pvscan
-
-service cinder-volume restart
-service cinder-api restart
-service cinder-scheduler restart
-
-#cinder create --display_name test 1
-#cinder list
+echo "export OS_USERNAME=$ADMINUSERNAME" > cinderrc
+echo "export OS_PASSWORD=$ADMINUSERPASS" >> cinderc
+echo "export OS_TENANT_ID=$DEFTENANTID" >> cinderrc
+echo "export OS_AUTH_URL=\"http://$KEYSTONEIP:5000/v2.0/\" " >> cinderrc

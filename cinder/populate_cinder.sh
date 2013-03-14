@@ -15,13 +15,23 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
-glance	--os-username="$ADMINUSERNAME" \
-	--os-password="$ADMINUSERPASS" \
-	--os-tenant-id="$DEFTENANTID" \
-	--os-auth-url="http://$GLANCEIP:5000/v2.0/" \
- 	image-create \
-	--location http://uec-images.ubuntu.com/releases/12.04/release/ubuntu-12.04-server-cloudimg-amd64-disk1.img \
-	--is-public true \
-	--disk-format qcow2 \
-	--container-format bare \
-	--name "Ubuntu"
+###################################################################################
+
+
+
+dd if=/dev/zero of=cinder-volumes bs=1 count=0 seek=2G
+
+losetup /dev/loop2 cinder-volumes
+
+pvcreate /dev/loop2
+vgcreate cinder-volumes /dev/loop2
+pvscan
+
+service cinder-volume restart
+service cinder-api restart
+service cinder-scheduler restart
+
+#cinder create --display_name test 1
+#cinder list
+
+
