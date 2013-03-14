@@ -80,5 +80,5 @@ cinder-manage db sync
 
 echo "export OS_USERNAME=$ADMINUSERNAME" > cinderrc
 echo "export OS_PASSWORD=$ADMINUSERPASS" >> cinderc
-echo "export OS_TENANT_ID=$DEFTENANTID" >> cinderrc
+echo "export OS_TENANT_NAME=$DEFTENANTNAME" >> cinderrc
 echo "export OS_AUTH_URL=\"http://$KEYSTONEIP:5000/v2.0/\" " >> cinderrc

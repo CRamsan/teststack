@@ -33,7 +33,5 @@ service cinder-volume restart
 service cinder-api restart
 service cinder-scheduler restart
 
-cinder create --display_name test 1
-cinder list
-
-
+cinder --os-username "$ADMINUSERNAME" --os-password "$ADMINUSERPASS" --os-tenant-name "$DEFTENANTNAME" --os-auth-url "http://$KEYSTONEIP:5000/v2.0/" create --display_name test 1
+cinder --os-username "$ADMINUSERNAME" --os-password "$ADMINUSERPASS" --os-tenant-name "$DEFTENANTNAME" --os-auth-url "http://$KEYSTONEIP:5000/v2.0/" list
