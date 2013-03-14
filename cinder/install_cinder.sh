@@ -55,7 +55,7 @@ echo "rabbit_userid = guest" >> /etc/cinder/cinder.conf
 echo "rabbit_password = $RABBITPASS" >> /etc/cinder/cinder.conf
 echo "rabbit_virtual_host = /" >> /etc/cinder/cinder.conf
 
-if [ ! -n "$CINDEDEV" ]
+if [ ! -n "$CINDERDEV" ]
 then
         func_echo "On which device will Cinder store the data? Please choose one on the form [sda2, sda3, sdb1, loop2, etc...]"
         func_echo "More devices can be configured later"

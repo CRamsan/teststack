@@ -17,21 +17,23 @@ fi
 
 ###################################################################################
 
+func_echo "Make sure the partition $CINDERDEV is formatted and ready to be used by LVM, press [ENTER] when ready"
 
+if [ ! -n "$CINDERDEV" ]
+then
+	func_echo "Variable CINDERDEV is not defined. Source the RC file or run the install_cinder sript"
+	exit
+fi
 
-dd if=/dev/zero of=cinder-volumes bs=1 count=0 seek=2G
-
-losetup /dev/loop2 cinder-volumes
-
-pvcreate /dev/loop2
-vgcreate cinder-volumes /dev/loop2
+pvcreate /dev/"$CINDERDEV"
+vgcreate cinder-volumes /dev/"CINDERDEV"
 pvscan
 
 service cinder-volume restart
 service cinder-api restart
 service cinder-scheduler restart
 
-#cinder create --display_name test 1
-#cinder list
+cinder create --display_name test 1
+cinder list
 
 
