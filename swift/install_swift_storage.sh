@@ -21,10 +21,18 @@ echo "What is the local IP"
 NODEIP=$(func_ask_user)
 func_set_value "NODEIP" $NODEIP
 
-mkfs.xfs -i size=1024 /dev/sdb1
-echo "/dev/sdb1 /srv/node/sdb1 xfs noatime,nodiratime,nobarrier,logbufs=8 0 0" >> /etc/fstab
-mkdir -p /srv/node/sdb1
-mount /srv/node/sdb1
+if [ ! -n "$SWIFTDEV" ]
+then
+        func_echo "On which device will Swift store the data? Please choose one on the form [sda2, sda3, sdb1, etc...]"
+        func_echo "More devices can be configured later"
+        SWIFTDEV=$(func_ask_user)
+        func_set_value "SWIFTDEV" $SWIFTDEV
+fi
+
+mkfs.xfs -i size=1024 /dev/$SWIFTDEV
+echo "/dev/$SWIFTDEV /srv/node/device xfs noatime,nodiratime,nobarrier,logbufs=8 0 0" >> /etc/fstab
+mkdir -p /srv/node/device
+mount /srv/node/device
 chown -R swift:swift /srv/node
 
 
