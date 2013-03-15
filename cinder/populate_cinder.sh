@@ -26,7 +26,7 @@ then
 fi
 
 pvcreate /dev/"$CINDERDEV"
-vgcreate cinder-volumes /dev/"CINDERDEV"
+vgcreate cinder-volumes /dev/"$CINDERDEV"
 pvscan
 
 service cinder-volume restart
