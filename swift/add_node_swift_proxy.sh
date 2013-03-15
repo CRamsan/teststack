@@ -15,15 +15,28 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+func_echo "THIS SCRIPT SHOULD BE RUN ON THE PROXY SERVER"
+
+func_echo "Make sure the partition you are planning on using is formatted to XFS, press [ENTER] when ready"
+read
+
 echo "Give the IP of a storage node"
 NODEIP=$(func_ask_user)
 func_set_value "NODEIP" $NODEIP
 
 cd /etc/swift
 
-swift-ring-builder account.builder add z1-$NODEIP:6002/sdb1 100
-swift-ring-builder container.builder add z1-$NODEIP:6001/sdb1 100
-swift-ring-builder object.builder add z1-$NODEIP:6000/sdb1 100
+if [ ! -n "$SWIFTDEV" ]
+then
+        func_echo "On which device will Swift store the data? Please choose one on the form [sda2, sda3, sdb1, loop2, etc...]"
+        func_echo "More devices can be configured later"
+        SWIFTDEV=$(func_ask_user)
+        func_set_value "SWIFTDEV" $SWIFTDEV
+fi
+
+swift-ring-builder account.builder add z1-$NODEIP:6002/$SWIFTDEV 100
+swift-ring-builder container.builder add z1-$NODEIP:6001/$SWIFTDEV 100
+swift-ring-builder object.builder add z1-$NODEIP:6000/$SWIFTDEV 100
 
 swift-ring-builder account.builder
 swift-ring-builder container.builder
