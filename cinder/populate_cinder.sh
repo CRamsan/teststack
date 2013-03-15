@@ -18,6 +18,7 @@ fi
 ###################################################################################
 
 func_echo "Make sure the partition $CINDERDEV is formatted and ready to be used by LVM, press [ENTER] when ready"
+read 
 
 if [ ! -n "$CINDERDEV" ]
 then
