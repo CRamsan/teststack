@@ -54,8 +54,8 @@ scp account.ring.gz "$TUSERNAME"@"$NODEIP":~
 scp container.ring.gz "$TUSERNAME"@"$NODEIP":~
 scp object.ring.gz "$TUSERNAME"@"$NODEIP":~
 
-read
 func_echo "Press enter when you are ready"
+read
 
 chown -R swift:swift /etc/swift
 swift-init proxy start
