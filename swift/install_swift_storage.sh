@@ -17,9 +17,12 @@ fi
 
 func_install swift-account swift-container swift-object xfsprogs
 
-echo "What is the local IP"
-NODEIP=$(func_ask_user)
-func_set_value "NODEIP" $NODEIP
+if [ ! -n "$NODEIP" ] 
+then
+	echo "What is the local IP"
+	NODEIP=$(func_ask_user)
+	func_set_value "NODEIP" $NODEIP
+fi
 
 if [ ! -n "$SWIFTDEV" ]
 then

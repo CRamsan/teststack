@@ -16,9 +16,13 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 func_install swift-proxy memcached python-swiftclient python-keystone python-keystoneclient
-echo "What is the local IP"
-NODEIP=$(func_ask_user)
-func_set_value "NODEIP" $NODEIP
+
+if [ ! -n "$NODEIP" ]
+then
+	echo "What is the local IP"
+	NODEIP=$(func_ask_user)
+	func_set_value "NODEIP" $NODEIP
+fi
 
 cd /etc/swift
 openssl req -new -x509 -nodes -out cert.crt -keyout cert.key
@@ -72,6 +76,7 @@ echo "" 					>> /etc/swift/proxy-server.conf
 echo "[filter:healthcheck]" 			>> /etc/swift/proxy-server.conf
 echo "use = egg:swift#healthcheck" 		>> /etc/swift/proxy-server.conf
 END
+
 cd /etc/swift
 swift-ring-builder account.builder create 5 3 1
 swift-ring-builder container.builder create 5 3 1
