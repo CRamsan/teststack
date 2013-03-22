@@ -36,6 +36,8 @@ GRANT ALL ON nova.* TO 'nova'@'%' IDENTIFIED BY "$NOVAPASS";
 GRANT ALL ON nova.* TO 'nova'@'localhost' IDENTIFIED BY "$NOVAPASS";
 EOF
 
+func_echo "Modify /etc/nova/nova.conf"
+read
 
 #echo "s3_host=$SWIFTIP" 				>> /etc/nova/nova.conf
 #echo "ec2_host=$NOVAIP" 				>> /etc/nova/nova.conf
@@ -86,6 +88,9 @@ EOF
 
 sudo chown -R nova. /etc/nova
 sudo chmod 644 /etc/nova/nova.conf
+
+func_echo "MOdify /etc/nova/api-paste.ini"
+read
 
 #func_replace "/etc/nova/api-paste.ini" "auth_host = 127.0.0.1"				"auth_host = $KEYSTONEIP"
 #func_replace "/etc/nova/api-paste.ini" "admin_tenant_name = %SERVICE_TENANT_NAME%"	"admin_tenant_name = service"

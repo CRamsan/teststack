@@ -45,6 +45,11 @@ then
 	func_set_value "GLANCEIP" $GLANCEIP
 fi
 
+func_echo "Modify /etc/glance/glance-registry.conf"
+read
+func_echo "Modify /etc/glance/glance-api.conf"
+read
+
 ##Configure glance to use mysql
 #func_replace "/etc/glance/glance-api.conf" 	"sql_connection = sqlite:////var/lib/glance/glance.sqlite" "sql_connection = mysql://glance:$GLANCEPASS@$GLANCEIP/glance"
 #func_replace "/etc/glance/glance-registry.conf" "sql_connection = sqlite:////var/lib/glance/glance.sqlite" "sql_connection = mysql://glance:$GLANCEPASS@$GLANCEIP/glance"

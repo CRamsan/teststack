@@ -38,6 +38,7 @@ mkdir -p /srv/node/device
 mount /srv/node/device
 chown -R swift:swift /srv/node
 
+func_echo "Modify /etc/rsyncd.conf"
 : <<'END'
 echo "uid = swift" 			> /etc/rsyncd.conf
 echo "gid = swift" 			>> /etc/rsyncd.conf
@@ -68,11 +69,17 @@ func_replace "/etc/default/rsync" "RSYNC_ENABLE=false" "RSYNC_ENABLE = true"
 
 service rsync start
 
-func_replace "/etc/swift/account-server.conf" 	"bind_ip = 0.0.0.0" "bind_ip = $NODEIP"
+#func_replace "/etc/swift/account-server.conf" 	"bind_ip = 0.0.0.0" "bind_ip = $NODEIP"
+func_echo "Modify /etc/swift/account-server.conf"
+read
 
-func_replace "/etc/swift/container-server.conf"	"bind_ip = 0.0.0.0" "bind_ip = $NODEIP"
+#func_replace "/etc/swift/container-server.conf"	"bind_ip = 0.0.0.0" "bind_ip = $NODEIP"
+func_echo "Modify /etc/swift/container-server.conf"
+read
 
-func_replace "/etc/swift/object-server.conf"	"bind_ip = 0.0.0.0" "bind_ip = $NODEIP"
+#func_replace "/etc/swift/object-server.conf"	"bind_ip = 0.0.0.0" "bind_ip = $NODEIP"
+func_echo "Modify /etc/swift/object-server.conf"
+read
 
 swift-init object-server start
 swift-init object-replicator start

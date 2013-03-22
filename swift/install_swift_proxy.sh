@@ -32,6 +32,9 @@ func_replace "/etc/memcached.conf" "-l 127.0.0.1" "-l $NODEIP"
 
 service memcached restart
 
+func_echo "Modify /etc/swift/proxy-server.conf"
+read
+
 : <<'END'
 echo "[DEFAULT]" 				> /etc/swift/proxy-server.conf
 echo "bind_port = 8888" 			>> /etc/swift/proxy-server.conf

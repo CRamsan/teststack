@@ -42,11 +42,17 @@ then
         func_set_value "CINDERIP" $CINDERIP
 fi
 
+func_echo "Modify /etc/cinder/api-paste.ini"
+read
+
 #func_replace "/etc/cinder/api-paste.ini" "service_host = 127.0.0.1"			"service_host = $CINDERIP"
 #func_replace "/etc/cinder/api-paste.ini" "auth_host = 127.0.0.1"			"auth_host = $KEYSTONEIP"
 #func_replace "/etc/cinder/api-paste.ini" "admin_tenant_name = %SERVICE_TENANT_NAME%"	"admin_tenant_name = service"
 #func_replace "/etc/cinder/api-paste.ini" "admin_user = %SERVICE_USER%"			"admin_user = cinder"
 #func_replace "/etc/cinder/api-paste.ini" "admin_password = %SERVICE_PASSWORD%"		"admin_password = cinder"
+
+func_echo "Modify /etc/cinder/cinder.conf"
+read
 
 #echo "sql_connection = mysql://cinder:$CINDERPASS@$CINDERIP/cinder" >> /etc/cinder/cinder.conf
 #echo "rabbit_host = $KEYSTONEIP"  >> /etc/cinder/cinder.conf
@@ -63,6 +69,9 @@ then
         func_set_value "CINDERDEV" $CINDERDEV
 fi
 
+func_echo "Modify /etc/lvm/lvm.conf"
+read
+
 #if [[ $CINDERDEV == loop* ]]
 #then
 #	func_replace "/etc/lvm/lvm.conf" "filter = [ \"a/.*/\" ]" 	"filter = [  \"a/loop/\", \"r/.*/\"]"
@@ -70,6 +79,8 @@ fi
 #	func_replace "/etc/lvm/lvm.conf" "filter = [ \"a/.*/\" ]" 	"filter = [  \"a/$CINDERDEV/\", \"r/.*/\"]"
 #fi
 
+func_echo "Modify /etc/tgt/conf.d/cinder.conf"
+read
 
 #echo "state_path = /var/lib/cinder " >> /etc/tgt/conf.d/cinder.conf
 #echo "volumes_dir = /var/lib/cinder/volumes " >> /etc/tgt/conf.d/cinder.conf

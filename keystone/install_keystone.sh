@@ -53,6 +53,9 @@ then
 	ADMINTOKEN=$(func_retrieve_value "ADMINTOKEN")
 fi
 
+func_echo "Modify /etc/keystone/keystone.conf"
+read
+
 ##Configure Keystone to use mysql.
 #func_replace "/etc/keystone/keystone.conf" "connection = sqlite:////var/lib/keystone/keystone.db" "connection = mysql://keystone:$KEYSTONEPASS@$KEYSTONEIP/keystone"
 
