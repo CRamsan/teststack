@@ -28,6 +28,7 @@ func_replace "/etc/memcached.conf" "-l 127.0.0.1" "-l $NODEIP"
 
 service memcached restart
 
+: <<'END'
 echo "[DEFAULT]" 				> /etc/swift/proxy-server.conf
 echo "bind_port = 8888" 			>> /etc/swift/proxy-server.conf
 echo "user = swift" 				>> /etc/swift/proxy-server.conf
@@ -70,7 +71,7 @@ echo "use = egg:swift#catch_errors" 		>> /etc/swift/proxy-server.conf
 echo "" 					>> /etc/swift/proxy-server.conf
 echo "[filter:healthcheck]" 			>> /etc/swift/proxy-server.conf
 echo "use = egg:swift#healthcheck" 		>> /etc/swift/proxy-server.conf
-
+END
 cd /etc/swift
 swift-ring-builder account.builder create 5 3 1
 swift-ring-builder container.builder create 5 3 1

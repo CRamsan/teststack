@@ -1,6 +1,8 @@
-\#!/bin/bash
+#!/bin/bash
 #This script is based on the tutorial that can be found at:
 #http://docs.openstack.org/trunk/openstack-compute/install/apt/content/
+
+exit
 
 localrc="localrc"
 

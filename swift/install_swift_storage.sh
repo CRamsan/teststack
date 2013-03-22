@@ -35,7 +35,7 @@ mkdir -p /srv/node/device
 mount /srv/node/device
 chown -R swift:swift /srv/node
 
-
+: <<'END'
 echo "uid = swift" 			> /etc/rsyncd.conf
 echo "gid = swift" 			>> /etc/rsyncd.conf
 echo "log file = /var/log/rsyncd.log" 	>> /etc/rsyncd.conf
@@ -59,6 +59,7 @@ echo "max connections = 2" 		>> /etc/rsyncd.conf
 echo "path = /srv/node/" 		>> /etc/rsyncd.conf
 echo "read only = false" 		>> /etc/rsyncd.conf
 echo "lock file = /var/lock/object.lock" >> /etc/rsyncd.conf
+END
 
 func_replace "/etc/default/rsync" "RSYNC_ENABLE=false" "RSYNC_ENABLE = true"
 

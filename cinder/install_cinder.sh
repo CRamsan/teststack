@@ -42,18 +42,18 @@ then
         func_set_value "CINDERIP" $CINDERIP
 fi
 
-func_replace "/etc/cinder/api-paste.ini" "service_host = 127.0.0.1"			"service_host = $CINDERIP"
-func_replace "/etc/cinder/api-paste.ini" "auth_host = 127.0.0.1"			"auth_host = $KEYSTONEIP"
-func_replace "/etc/cinder/api-paste.ini" "admin_tenant_name = %SERVICE_TENANT_NAME%"	"admin_tenant_name = service"
-func_replace "/etc/cinder/api-paste.ini" "admin_user = %SERVICE_USER%"			"admin_user = cinder"
-func_replace "/etc/cinder/api-paste.ini" "admin_password = %SERVICE_PASSWORD%"		"admin_password = cinder"
+#func_replace "/etc/cinder/api-paste.ini" "service_host = 127.0.0.1"			"service_host = $CINDERIP"
+#func_replace "/etc/cinder/api-paste.ini" "auth_host = 127.0.0.1"			"auth_host = $KEYSTONEIP"
+#func_replace "/etc/cinder/api-paste.ini" "admin_tenant_name = %SERVICE_TENANT_NAME%"	"admin_tenant_name = service"
+#func_replace "/etc/cinder/api-paste.ini" "admin_user = %SERVICE_USER%"			"admin_user = cinder"
+#func_replace "/etc/cinder/api-paste.ini" "admin_password = %SERVICE_PASSWORD%"		"admin_password = cinder"
 
-echo "sql_connection = mysql://cinder:$CINDERPASS@$CINDERIP/cinder" >> /etc/cinder/cinder.conf
-echo "rabbit_host = $KEYSTONEIP"  >> /etc/cinder/cinder.conf
-echo "rabbit_port = 5672" >> /etc/cinder/cinder.conf
-echo "rabbit_userid = guest" >> /etc/cinder/cinder.conf
-echo "rabbit_password = $RABBITPASS" >> /etc/cinder/cinder.conf
-echo "rabbit_virtual_host = /" >> /etc/cinder/cinder.conf
+#echo "sql_connection = mysql://cinder:$CINDERPASS@$CINDERIP/cinder" >> /etc/cinder/cinder.conf
+#echo "rabbit_host = $KEYSTONEIP"  >> /etc/cinder/cinder.conf
+#echo "rabbit_port = 5672" >> /etc/cinder/cinder.conf
+#echo "rabbit_userid = guest" >> /etc/cinder/cinder.conf
+#echo "rabbit_password = $RABBITPASS" >> /etc/cinder/cinder.conf
+#echo "rabbit_virtual_host = /" >> /etc/cinder/cinder.conf
 
 if [ ! -n "$CINDERDEV" ]
 then
@@ -63,16 +63,16 @@ then
         func_set_value "CINDERDEV" $CINDERDEV
 fi
 
-if [[ $CINDERDEV == loop* ]]
-then
-	func_replace "/etc/lvm/lvm.conf" "filter = [ \"a/.*/\" ]" 	"filter = [  \"a/loop/\", \"r/.*/\"]"
-else
-	func_replace "/etc/lvm/lvm.conf" "filter = [ \"a/.*/\" ]" 	"filter = [  \"a/$CINDERDEV/\", \"r/.*/\"]"
-fi
+#if [[ $CINDERDEV == loop* ]]
+#then
+#	func_replace "/etc/lvm/lvm.conf" "filter = [ \"a/.*/\" ]" 	"filter = [  \"a/loop/\", \"r/.*/\"]"
+#else
+#	func_replace "/etc/lvm/lvm.conf" "filter = [ \"a/.*/\" ]" 	"filter = [  \"a/$CINDERDEV/\", \"r/.*/\"]"
+#fi
 
 
-echo "state_path = /var/lib/cinder " >> /etc/tgt/conf.d/cinder.conf
-echo "volumes_dir = /var/lib/cinder/volumes " >> /etc/tgt/conf.d/cinder.conf
+#echo "state_path = /var/lib/cinder " >> /etc/tgt/conf.d/cinder.conf
+#echo "volumes_dir = /var/lib/cinder/volumes " >> /etc/tgt/conf.d/cinder.conf
 
 sudo restart tgt
 
