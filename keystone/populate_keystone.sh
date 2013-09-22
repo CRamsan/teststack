@@ -170,9 +170,9 @@ fi
 func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "nova" 		"compute" 	"Compute Service" 		"$NOVAIP"
 func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "cinder" 	"volume" 	"Volume Service" 		"$CINDERIP"
 func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "glance" 	"image" 	"Image Service" 		"$GLANCEIP"
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "swift" 	"object-store" 	"Object Storage Service" 	"$SWIFTIP"
+#func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "swift" 	"object-store" 	"Object Storage Service" 	"$SWIFTIP"
 func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "keystone" 	"identity" 	"Identity Service" 		"$KEYSTONEIP"
-func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "ec2" 		"ec2" 		"EC2 Compatibility Service" 	"$EC2IP"
+#func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "ec2" 		"ec2" 		"EC2 Compatibility Service" 	"$EC2IP"
 func_create_service "$ADMINTOKEN" "$KEYSTONEIP" "quantum" 	"network" 	"Network Service" 		"$QUANTUMIP"
 
 echo "export OS_USERNAME=$ADMINUSERNAME" >> keystonerc

@@ -33,6 +33,7 @@ fi
 
 ##Give Keystone access to the database.
 mysql -u root -p"$MYSQLPASS" <<EOF
+DROP DATABASE keystone
 CREATE DATABASE keystone;
 GRANT ALL ON keystone.* TO 'keystone'@'%' IDENTIFIED BY "$KEYSTONEPASS";
 GRANT ALL ON keystone.* TO 'keystone'@'localhost' IDENTIFIED BY "$KEYSTONEPASS";
@@ -59,13 +60,18 @@ func_replace "/etc/keystone/keystone.conf" "connection = sqlite:////var/lib/keys
 ##And set the admin-token
 func_replace "/etc/keystone/keystone.conf" "# admin_token = ADMIN" "admin_token = $ADMINTOKEN"
 
+
+#It seems like the missing certs are bundled now.
+
 #Certs are not bundled so we will download them manually
-mkdir /etc/keystone/ssl
-wget http://ubuntu-cloud.archive.canonical.com/ubuntu/pool/main/k/keystone/keystone_2013.1.g3.orig.tar.gz
-tar xzf keystone_2013.1.g3.orig.tar.gz
-mv keystone-2013.1.g3/examples/pki/* /etc/keystone/ssl/
-rm -r keystone-2013.1.g3
-rm -r keystone_2013.1.g3.orig.tar.gz
+#mkdir /etc/keystone/ssl
+#wget http://ubuntu-cloud.archive.canonical.com/ubuntu/pool/main/k/keystone/keystone_2013.1.g3.orig.tar.gz
+#tar xzf keystone_2013.1.g3.orig.tar.gz
+#mv keystone-2013.1.g3/examples/pki/* /etc/keystone/ssl/
+#rm -r keystone-2013.1.g3
+#rm -r keystone_2013.1.g3.orig.tar.gz
+
+
 
 ##Next, restart the keystone service so that it picks up the new database configuration.
 ##Lastly, initialize the new keystone database.
